@@ -1,11 +1,16 @@
 package com.example.jansenmo.meetmeapp;
 
-import android.content.pm.PackageManager;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.res.Resources;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.view.View;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -13,40 +18,21 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.res.Resources;
-import android.location.Criteria;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.util.Log;
-import android.widget.Button;
-import android.widget.EditText;
+import android.view.View;
 import android.widget.TextView;
-/*
-import com.google.android.gms.maps.*;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import android.widget.Toast;
+
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMapOptions;
+import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
-*/
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpHost;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import android.widget.Toast;
+
 
 public class MainActivity extends AppCompatActivity
         implements LocationListener, NavigationView.OnNavigationItemSelectedListener {
@@ -60,10 +46,8 @@ public class MainActivity extends AppCompatActivity
     private double lng;
     private boolean geodaten;
     public boolean maperstellt;
-    /*
     private GoogleMap googleMap;
     private Marker marker;
-    */
     private TextView anzeigeLaenge;
     private TextView anzeigeBreite;
 
@@ -72,8 +56,7 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        anzeigeBreite = (TextView) this.findViewById(R.id.textView2);
-        anzeigeLaenge = (TextView) this.findViewById(R.id.textView3);
+
 
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -100,6 +83,25 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        //Erstellen der Map
+        LatLng User = new LatLng(lat, lng);
+        try {
+            if (googleMap == null) {
+                googleMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
+                GoogleMapOptions options = new GoogleMapOptions();
+                options.mapType(GoogleMap.MAP_TYPE_NORMAL);
+                options.compassEnabled(false);
+                googleMap.setMyLocationEnabled(true);
+                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(User, 15));
+                if (googleMap == null) {
+                    Toast.makeText(getApplicationContext(), "Sorry! unable to create maps", Toast.LENGTH_SHORT).show();
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        maperstellt = true;
 
         positionen = new ArrayList<Location>();
     }
