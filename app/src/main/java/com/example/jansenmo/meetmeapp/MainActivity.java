@@ -26,8 +26,10 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,6 +52,7 @@ public class MainActivity extends AppCompatActivity
     private Marker marker;
     private TextView anzeigeLaenge;
     private TextView anzeigeBreite;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,11 +100,12 @@ public class MainActivity extends AppCompatActivity
                 if (googleMap == null) {
                     Toast.makeText(getApplicationContext(), "Sorry! unable to create maps", Toast.LENGTH_SHORT).show();
                 }
+                maperstellt = true;
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        maperstellt = true;
+
 
         positionen = new ArrayList<Location>();
     }
@@ -194,6 +198,15 @@ public class MainActivity extends AppCompatActivity
         anzeigeLaenge.setText(Location.convert(lng, Location.FORMAT_DEGREES));
 
         geodaten = true;
+        if (maperstellt) {
+            //einlesen der daten aus jason format und speichern als
+            LatLng User = new LatLng(lat, lng);
+            String username = "User1";
+            if (marker != null) {
+                marker.remove();      //löscht immer nur einen marker
+            }
+            marker = googleMap.addMarker(new MarkerOptions().position(User).title(username).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)).draggable(true)); //später sollten hier die anderen User hin
+        }
     }
 
     //Wenn GPS ausgeschaltet wird soll Meldung erscheinen
@@ -216,23 +229,5 @@ public class MainActivity extends AppCompatActivity
     public void onStatusChanged(String provider, int status, Bundle extras) {
         // TODO Auto-generated method stub
     }
-/*
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 500, 0, this); //überprüft alle 500s den Standort wenn ein Mindesabstand von m entstanden ist
-    }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if (checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
-        locationManager.removeUpdates(this);
-    }
-*/
 }
