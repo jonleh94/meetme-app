@@ -1,8 +1,10 @@
 package com.example.jansenmo.meetmeapp;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.location.Location;
 import android.location.LocationListener;
@@ -176,7 +178,11 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_friends) {
 
         } else if (id == R.id.nav_ranking) {
-
+            //Open ScoreBoard
+            Intent intent;
+            intent = new Intent(this, ranking.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            this.startActivity(intent);
         } else if (id == R.id.nav_info) {
 
         } else if (id == R.id.nav_help) {
