@@ -18,6 +18,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,6 +33,13 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpHost;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,9 +49,6 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity
         implements LocationListener, NavigationView.OnNavigationItemSelectedListener {
 
-    private static final String HOSTNAME = "10.0.2.2";
-    private static final int PORT = 8087;
-    private static final String TAG = "HelloActivity";
     private LocationManager locationManager;
     private List<Location> positionen;
     private double lat;
@@ -187,6 +192,11 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_help) {
 
+            Intent intent;
+            intent = new Intent(this, helpActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            this.startActivity(intent);
+
         } else if (id == R.id.nav_logout) {
 
         }
@@ -237,5 +247,6 @@ public class MainActivity extends AppCompatActivity
     public void onStatusChanged(String provider, int status, Bundle extras) {
         // TODO Auto-generated method stub
     }
+
 
 }

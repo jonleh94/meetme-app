@@ -4,6 +4,7 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -12,6 +13,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,6 +24,18 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpHost;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 /**
  * Created by mayf on 27.10.2015.
  */
@@ -30,14 +44,6 @@ public class ranking extends AppCompatActivity implements NavigationView.OnNavig
     DrawerLayout drawerLayout;
     ActionBarDrawerToggle toggle;
 
-    //TextView rank2 = (TextView)findViewById(R.id.Rank2);
-    //TextView rank3 = (TextView)findViewById(R.id.Rank3);
-    //TextView user1 = (TextView)findViewById(R.id.UserName1);
-    //TextView user2 = (TextView)findViewById(R.id.UserName1);
-    //TextView user3 = (TextView)findViewById(R.id.UserName3);
-    //TextView score1 = (TextView)findViewById(R.id.Score1);
-    //TextView score2 = (TextView)findViewById(R.id.Score2);
-    //TextView score3 = (TextView)findViewById(R.id.Score3);
 
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -46,15 +52,12 @@ public class ranking extends AppCompatActivity implements NavigationView.OnNavig
 
         setContentView(R.layout.table);
 
-
-
-
-        String[] rank = {"1", "2", "3", "4"};
-        String[] score = {"user1", "user2", "user3", "user4"};
-        String[] user = {"score1", "score2", "score3", "score4"};
+        String[] rank = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"};
+        String[] score = {"user1", "user2", "user3", "user4", "user5", "user6", "user7", "user8", "user9", "user10"};
+        String[] user = {"score1", "score2", "score3", "score4", "score5", "score6", "score7", "score8", "score9", "score10"};
 
         init(rank, score, user);
-        }
+    }
 
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -113,38 +116,57 @@ public class ranking extends AppCompatActivity implements NavigationView.OnNavig
     }
 
     public void init(String[] rank, String[] user, String[] score) {
+
+        int headerFontSize=37;
         TableLayout stk = (TableLayout) findViewById(R.id.table_main);
         TableRow tbrow0 = new TableRow(this);
         TextView tv0 = new TextView(this);
         tv0.setText("Rank");
+        tv0.setTextSize(headerFontSize);
+        tv0.setTypeface(null, Typeface.BOLD);
+        tv0.setPadding(25, 0, 25, 0);
         tbrow0.addView(tv0);
         TextView tv1 = new TextView(this);
         tv1.setText("User");
+        tv1.setTextSize(headerFontSize);
+        tv1.setTypeface(null, Typeface.BOLD);
+        tv1.setPadding(25, 0, 25, 0);
         tbrow0.addView(tv1);
         TextView tv2 = new TextView(this);
         tv2.setText("Score");
+        tv2.setTextSize(headerFontSize);
+        tv2.setTypeface(null, Typeface.BOLD);
+        tv2.setPadding(25, 0, 25, 0);
         tbrow0.addView(tv2);
+        tbrow0.setPadding(0,0,0,0);
         stk.addView(tbrow0);
-        for (int i = 0; i < rank.length; i++) {
+
+        for (int i = 0; i < user.length; i++) {
+
+            int fontSize = 20;
             TableRow tbrow = new TableRow(this);
+            tbrow.setPadding(0,0,0,0);
+            if(i%2 == 0){
+                tbrow.setBackgroundColor(Color.parseColor("#90c1ec"));
+            }
             TextView t1v = new TextView(this);
             t1v.setText(rank[i]);
+            t1v.setTextSize(fontSize);
             t1v.setGravity(Gravity.CENTER);
             tbrow.addView(t1v);
             TextView t2v = new TextView(this);
             t2v.setText(user[i]);
+            t2v.setTextSize(fontSize);
             t2v.setGravity(Gravity.CENTER);
             tbrow.addView(t2v);
             TextView t3v = new TextView(this);
             t3v.setText(score[i]);
+            t3v.setTextSize(fontSize);
             t3v.setGravity(Gravity.CENTER);
             tbrow.addView(t3v);
             stk.addView(tbrow);
         }
     }
-
-
-
 }
 
 
