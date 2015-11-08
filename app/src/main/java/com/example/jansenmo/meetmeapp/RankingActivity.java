@@ -39,6 +39,10 @@ public class RankingActivity extends AppCompatActivity {
     public String[] score = new String[10];
     public String[] user = new String[10];
 
+    String ip = "192.168.0.103";
+    String port = "8087";
+    String scoreboardList = "meetmeserver/api/leaderboard/list";
+
     protected void onCreate(Bundle savedInstanceState) {
 
 
@@ -58,11 +62,6 @@ public class RankingActivity extends AppCompatActivity {
 
 
     }
-
-
-    String ip = "192.168.0.103";
-    String port = "8087";
-    String scoreboardList = "meetmeserver/api/leaderboard/list";
 
     public void getScoreboard() {
         context = this;
