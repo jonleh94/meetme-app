@@ -12,8 +12,6 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
-    <!-- required to show current location -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
@@ -24,7 +22,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".MainActivity"
+            android:name=".MapsActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar" >
             <intent-filter>
@@ -34,8 +32,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".ranking"></activity>
-        <activity android:name=".helpActivity"></activity>
+        <activity android:name=".RankingActivity"></activity>
 
         <meta-data
             android:name="com.google.android.gms.version"
