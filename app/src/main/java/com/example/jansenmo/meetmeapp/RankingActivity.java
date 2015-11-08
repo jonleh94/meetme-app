@@ -4,14 +4,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.util.JsonReader;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -23,20 +22,22 @@ import android.widget.TextView;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
 /**
  * Created by mayf on 27.10.2015.
  */
-public class Ranking extends AppCompatActivity {
+public class RankingActivity extends AppCompatActivity {
     private DrawerLayout drawer;
 
     private Context context = this;
     private static URL requestUrl;
-    ArrayList<Score> userArray;
+    public String[] rank = new String[10];
+    public String[] score = new String[10];
+    public String[] user = new String[10];
 
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -51,113 +52,84 @@ public class Ranking extends AppCompatActivity {
         // Setup drawer view
         setupDrawerContent(vDrawer);
 
-        // Create arrays for scoreboard
-        String[] rank = new String[10];
-        String[] score = new String[10];
-        String[] user = new String[10];
 
-        try {
-            testImports();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+        // call AsynTask to perform network operation on separate thread
+        getScoreboard();
+
+
+    }
+
+
+    String ip = "192.168.0.103";
+    String port = "8087";
+    String scoreboardList = "meetmeserver/api/leaderboard/list";
+
+    public void getScoreboard() {
+        context = this;
+
+        if (true) {
+            new AsyncTask<String, String, ArrayList<Score>>() {
+                ArrayList<Score> scoreArray = null;
+
+                @Override
+                protected ArrayList<Score> doInBackground(String... params) {
+                    InputStream response = null;
+                    try {
+                        requestUrl = new URL("http://" +
+                                ip
+                                + ":"
+                                + port
+                                + "/"
+                                + scoreboardList);
+
+                    } catch (MalformedURLException e) {
+                        e.printStackTrace();
+                    }
+                    if (requestUrl != null) {
+                        HttpURLConnection urlConnection = null;
+                        try {
+                            urlConnection = (HttpURLConnection) requestUrl.openConnection();
+                            response = urlConnection.getInputStream();
+                            if (response != null) {
+                                ResponseImporter mUserImportierer = new ResponseImporter(); //create new JSON Parser Object
+                                try {
+                                    scoreArray = mUserImportierer.readJsonStream(response); //store JSON Objects from JSON Array as OtherUser Objects in userArray
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                            response.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            urlConnection.disconnect();
+                        } finally {
+                            urlConnection.disconnect();
+                        }
+
+
+                    }
+                    return scoreArray;
+                }
+                // wait for asynctask to finish
+                protected void onPostExecute(ArrayList<Score> scoreArray) {
+                    setLeaderboard(scoreArray);
+                }
+
+            }.execute();
+
         }
+    }
 
-        // read values from userArray
-        if (userArray.isEmpty()) {
-            Log.i("DEBUG", "Array Is Emtpy");
-        } else {
-            for (int i = 0; i < userArray.size(); i++) {
-                rank[i] = String.valueOf(i + 1);
-                score[i] = String.valueOf(userArray.get(i).score);
-                user[i] = userArray.get(i).username;
-            }
+
+    public void setLeaderboard(ArrayList<Score> userArray) {
+        for (int i = 0; i < userArray.size(); i++) {
+            rank[i] = String.valueOf(i + 1);
+            score[i] = String.valueOf(userArray.get(i).score);
+            user[i] = userArray.get(i).username;
         }
         init(rank, user, score);
     }
 
-
-    // Modifiy method when network communication is working
-    public void testImports() throws UnsupportedEncodingException {
-        InputStream stream = null;
-        InputStream test;
-        try {
-            stream = getAssets().open("data.json");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        JsonReader reader = new JsonReader(new InputStreamReader(stream, "UTF-8"));
-        if (stream != null) {
-
-            ResponseImporter mResponseImporter = new ResponseImporter(); //create new JSON Parser Object
-            try {
-                userArray = mResponseImporter.readJsonStream(stream);
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-        } else {
-            return;
-        }
-    }
-
-    /*
-        public void handleScoreboard() {
-            context = this;
-            if (true) //send http request only if connected to server
-            {
-                new AsyncTask<String, String, ArrayList<Score>>() {
-
-                    @Override
-                    protected ArrayList<Score> doInBackground(String... params) {
-                        InputStream response = null;
-                        try {
-                            requestUrl = new URL("http://"
-                                    + "192.168.0.149"
-                                    + ":"
-                                    + "8087"
-                                    + "/"
-                                    + "meetmeserver/api/leaderboard/list"
-                            );
-
-                        } catch (MalformedURLException e) {
-                            e.printStackTrace();
-                        }
-                        if (requestUrl != null) {
-                            HttpURLConnection urlConnection = null;
-                            try {
-                                urlConnection = (HttpURLConnection) requestUrl.openConnection();
-                                response = urlConnection.getInputStream();
-                                if (response != null) {
-                                    ResponseImporter mUserImportierer = new ResponseImporter(); //create new JSON Parser Object
-                                    try {
-                                        userArray = mUserImportierer.readJsonStream(response); //store JSON Objects from JSON Array as OtherUser Objects in userArray
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                                response.close();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                                urlConnection.disconnect();
-                            } finally {
-                                urlConnection.disconnect();
-                            }
-
-
-                        }
-                        return userArray;
-                    }
-
-
-                }.execute();
-                //interfaceSender.doGetOtherUsers(context);
-            } else {
-                Log.i("DEBUG", "handleSCOREBOARD_ERROR");
-            }
-        }
-    */
     public void init(String[] rank, String[] user, String[] score) {
 
         int headerFontSize = 37;
@@ -269,7 +241,7 @@ public class Ranking extends AppCompatActivity {
                 startActivity(mapsActivity);
                 break;
             case R.id.nav_ranking:
-                Intent profileActivity = new Intent(getApplicationContext(), Ranking.class);
+                Intent profileActivity = new Intent(getApplicationContext(), RankingActivity.class);
                 startActivity(profileActivity);
                 break;
             default:
