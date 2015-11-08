@@ -4,10 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
-import android.location.LocationListener;
-import android.net.Network;
 import android.os.Bundle;
-import android.provider.SyncStateContract;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -15,7 +12,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -161,9 +157,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 startActivity(mapsActivity);
                 break;
             case R.id.nav_ranking:
-                Intent profileActivity = new Intent(getApplicationContext(), RankingActivity.class);
-                startActivity(profileActivity);
-
+                Intent rankingActivity = new Intent(getApplicationContext(), RankingActivity.class);
+                startActivity(rankingActivity);
+                break;
+            case R.id.nav_help:
+                Intent helpActivity = new Intent(getApplicationContext(), com.example.jansenmo.meetmeapp.helpActivity.class);
+                startActivity(helpActivity);
                 break;
             default:
                 fragmentClass = MapsActivity.class;

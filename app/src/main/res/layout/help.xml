@@ -1,16 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
 
 
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:openDrawer="start">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:id="@+id/textView2"
-        android:text="How do I register ?
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="How do I register ?
 
 To play the game you first need to register on the website.
 To register please follow the following steps:
@@ -26,8 +36,25 @@ How do I know where I am and how do I find others on my device?
         To locate yourself you need to type in your Username and Password and press 'Sign In'. You should be forwarded to the menu, where you can choose between 'Show Location', 'My Friends' and 'Ranking'. By choosing 'Show Location' you are forwarded to a map, where you are located in the center of the screen. Around you you can see the other players nearby with their team color.
         How do I connect to other Users?
         When you register for the App you get a code with four digits. Everytime you meet someone new, a button 'meet me' should appear in the right-hand corner of your screen. After pressing this button a screen should pop up where you can type in the other persons Username and 4-digit-number. When the team color of the other person matches yours, you both get a point and the User is added to your friendlist. "
+            android:textAppearance="?android:attr/textAppearanceLarge"
 
-         />
+            />
 
 
-</LinearLayout>
+    </LinearLayout>
+
+    <include
+        layout="@layout/app_bar_main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <android.support.design.widget.NavigationView
+        android:id="@+id/nav_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:fitsSystemWindows="true"
+        app:headerLayout="@layout/nav_header_main"
+        app:menu="@menu/activity_main_drawer" />
+
+</android.support.v4.widget.DrawerLayout>
