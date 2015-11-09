@@ -26,6 +26,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.HashMap;
+
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, LocationTracker {
 
     private GoogleMap mMap;
@@ -33,6 +35,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     double latitude; // latitude
     double longitude; // longitude
     ProviderLocationTracker gps;
+
+
+    String ip = "192.168.0.103";
+    String port = "8087";
+
+    // TODO change when login ready
+    String username = "mojansen";
+    String password = "1234";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,10 +81,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // check if network is available
         // if not use gps
         LocationManager lm = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        if(lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)){
+        if (lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
             gps = new ProviderLocationTracker(this, ProviderLocationTracker.ProviderType.NETWORK);
-        }
-        else {
+        } else {
             gps = new ProviderLocationTracker(this, ProviderLocationTracker.ProviderType.GPS);
         }
 
@@ -87,6 +96,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 latitude = newLoc.getLatitude();
                 LatLng myPosition = new LatLng(latitude, longitude);
                 Marker myposition = mMap.addMarker(new MarkerOptions().position(myPosition).title("MY POSITION"));
+
+
+                // Send position to database
+                String lat = Double.toString(latitude);
+                String lng = Double.toString(longitude);
+                SendOwnLocation sendOwnLocation = new SendOwnLocation();
+                sendOwnLocation.execute("http://" + ip + ":" + port + "/meetmeserver/api/geo/" + username + "/" + password + "/" + lat + "/" + lng);
+
+
+                // Set focus on myPosition
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(myPosition));
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myPosition, 18));
             }
