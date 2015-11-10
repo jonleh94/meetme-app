@@ -14,6 +14,8 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -29,7 +31,7 @@ import java.util.ArrayList;
 /**
  * Created by mayf on 27.10.2015.
  */
-public class RankingUserActivity extends AppCompatActivity {
+public class RankingActivity extends AppCompatActivity{
     private DrawerLayout drawer;
 
     private Context context = this;
@@ -42,7 +44,8 @@ public class RankingUserActivity extends AppCompatActivity {
     String port = "8087";
     String scoreboardList = "meetmeserver/api/leaderboard/list";
 
-
+    Button teamButton, userButton;
+    TableLayout stk;
 
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -57,12 +60,31 @@ public class RankingUserActivity extends AppCompatActivity {
         // Setup drawer view
         setupDrawerContent(vDrawer);
 
+        teamButton = (Button) this.findViewById(R.id.teamButton);
+        teamButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                stk.removeAllViews();
+            }
+        });
+
+        userButton = (Button) this.findViewById(R.id.userButton);
+        userButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                stk.removeAllViews();
+                getUserScoreboard();
+            }
+        });
+
+
+
 
         // call AsynTask to perform network operation on separate thread
-        getScoreboard();
+        getUserScoreboard();
     }
 
-    public void getScoreboard() {
+    public void getUserScoreboard() {
         context = this;
 
         if (true) {
@@ -132,7 +154,7 @@ public class RankingUserActivity extends AppCompatActivity {
     public void init(String[] rank, String[] user, String[] score) {
 
         int headerFontSize = 37;
-        TableLayout stk = (TableLayout) findViewById(R.id.table_main);
+        stk = (TableLayout) findViewById(R.id.table_main);
         TableRow tbrow0 = new TableRow(this);
         TextView tv0 = new TextView(this);
         tv0.setText("Rank");
@@ -237,7 +259,7 @@ public class RankingUserActivity extends AppCompatActivity {
                 startActivity(mapsActivity);
                 break;
             case R.id.nav_ranking:
-                Intent profileActivity = new Intent(getApplicationContext(), RankingUserActivity.class);
+                Intent profileActivity = new Intent(getApplicationContext(), RankingActivity.class);
                 startActivity(profileActivity);
                 break;
             case R.id.nav_help:
@@ -263,8 +285,6 @@ public class RankingUserActivity extends AppCompatActivity {
         setTitle(menuItem.getTitle());
         drawer.closeDrawers();
     }
-
-
 }
 
 

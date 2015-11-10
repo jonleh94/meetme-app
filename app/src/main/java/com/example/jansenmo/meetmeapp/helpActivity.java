@@ -97,7 +97,7 @@ public class helpActivity extends AppCompatActivity implements NavigationView.On
                 startActivity(mapsActivity);
                 break;
             case R.id.nav_ranking:
-                Intent rankingActivity = new Intent(getApplicationContext(), RankingUserActivity.class);
+                Intent rankingActivity = new Intent(getApplicationContext(), RankingActivity.class);
                 startActivity(rankingActivity);
                 break;
             case R.id.nav_help:
