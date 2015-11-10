@@ -3,7 +3,6 @@ package com.example.jansenmo.meetmeapp;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -98,7 +97,7 @@ public class helpActivity extends AppCompatActivity implements NavigationView.On
                 startActivity(mapsActivity);
                 break;
             case R.id.nav_ranking:
-                Intent rankingActivity = new Intent(getApplicationContext(), RankingActivity.class);
+                Intent rankingActivity = new Intent(getApplicationContext(), RankingUserActivity.class);
                 startActivity(rankingActivity);
                 break;
             case R.id.nav_help:

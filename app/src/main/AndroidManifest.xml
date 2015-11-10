@@ -32,7 +32,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".RankingActivity"></activity>
+        <activity android:name=".RankingUserActivity"></activity>
         <activity android:name=".helpActivity"></activity>
         <activity android:name=".MapsActivity"></activity>
 

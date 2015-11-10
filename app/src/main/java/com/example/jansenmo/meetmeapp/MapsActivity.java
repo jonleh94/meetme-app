@@ -178,7 +178,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 startActivity(mapsActivity);
                 break;
             case R.id.nav_ranking:
-                Intent rankingActivity = new Intent(getApplicationContext(), RankingActivity.class);
+                Intent rankingActivity = new Intent(getApplicationContext(), RankingUserActivity.class);
                 startActivity(rankingActivity);
                 break;
             case R.id.nav_help:

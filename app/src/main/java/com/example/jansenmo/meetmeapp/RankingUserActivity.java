@@ -7,7 +7,6 @@ import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -30,7 +29,7 @@ import java.util.ArrayList;
 /**
  * Created by mayf on 27.10.2015.
  */
-public class RankingActivity extends AppCompatActivity {
+public class RankingUserActivity extends AppCompatActivity {
     private DrawerLayout drawer;
 
     private Context context = this;
@@ -42,6 +41,8 @@ public class RankingActivity extends AppCompatActivity {
     String ip = "192.168.0.103";
     String port = "8087";
     String scoreboardList = "meetmeserver/api/leaderboard/list";
+
+
 
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -59,8 +60,6 @@ public class RankingActivity extends AppCompatActivity {
 
         // call AsynTask to perform network operation on separate thread
         getScoreboard();
-
-
     }
 
     public void getScoreboard() {
@@ -238,7 +237,7 @@ public class RankingActivity extends AppCompatActivity {
                 startActivity(mapsActivity);
                 break;
             case R.id.nav_ranking:
-                Intent profileActivity = new Intent(getApplicationContext(), RankingActivity.class);
+                Intent profileActivity = new Intent(getApplicationContext(), RankingUserActivity.class);
                 startActivity(profileActivity);
                 break;
             case R.id.nav_help:
