@@ -1,33 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
 
 
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:id="@+id/textView2"
-        android:text="How do I register ?
-
-To play the game you first need to register on the website.
-To register please follow the following steps:
-1. Pick a Username and Password and type into the given fields
-
-2. Press the register-button
-(If your chosen Username is already taken, you are requested to choose another one)
-
-3. On the upcoming site, type in your Gender, First Name, Last Name, E-mail and Location into the given fields, also retype your Password at the end of the formular
-Now you should be all set to register and start the game.
-
-How do I know where I am and how do I find others on my device?
-        To locate yourself you need to type in your Username and Password and press 'Sign In'. You should be forwarded to the menu, where you can choose between 'Show Location', 'My Friends' and 'Ranking'. By choosing 'Show Location' you are forwarded to a map, where you are located in the center of the screen. Around you you can see the other players nearby with their team color.
-        How do I connect to other Users?
-        When you register for the App you get a code with four digits. Everytime you meet someone new, a button 'meet me' should appear in the right-hand corner of your screen. After pressing this button a screen should pop up where you can type in the other persons Username and 4-digit-number. When the team color of the other person matches yours, you both get a point and the User is added to your friendlist. "
-
-         />
-
-
-</LinearLayout>
+</RelativeLayout>
