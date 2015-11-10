@@ -4,10 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
-import android.location.LocationListener;
-import android.net.Network;
 import android.os.Bundle;
-import android.provider.SyncStateContract;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -15,7 +12,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -30,6 +26,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.HashMap;
+
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, LocationTracker {
 
     private GoogleMap mMap;
@@ -37,6 +35,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     double latitude; // latitude
     double longitude; // longitude
     ProviderLocationTracker gps;
+
+
+    String ip = "192.168.0.103";
+    String port = "8087";
+
+    // TODO change when login ready
+    String username = "mojansen";
+    String password = "1234";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,10 +81,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // check if network is available
         // if not use gps
         LocationManager lm = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        if(lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)){
+        if (lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
             gps = new ProviderLocationTracker(this, ProviderLocationTracker.ProviderType.NETWORK);
-        }
-        else {
+        } else {
             gps = new ProviderLocationTracker(this, ProviderLocationTracker.ProviderType.GPS);
         }
 
@@ -91,6 +96,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 latitude = newLoc.getLatitude();
                 LatLng myPosition = new LatLng(latitude, longitude);
                 Marker myposition = mMap.addMarker(new MarkerOptions().position(myPosition).title("MY POSITION"));
+
+
+                // Send position to database
+                String lat = Double.toString(latitude);
+                String lng = Double.toString(longitude);
+                SendOwnLocation sendOwnLocation = new SendOwnLocation();
+                sendOwnLocation.execute("http://" + ip + ":" + port + "/meetmeserver/api/geo/" + username + "/" + password + "/" + lat + "/" + lng);
+
+
+                // Set focus on myPosition
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(myPosition));
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myPosition, 18));
             }
@@ -161,9 +176,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 startActivity(mapsActivity);
                 break;
             case R.id.nav_ranking:
-                Intent profileActivity = new Intent(getApplicationContext(), RankingActivity.class);
-                startActivity(profileActivity);
-
+                Intent rankingActivity = new Intent(getApplicationContext(), RankingActivity.class);
+                startActivity(rankingActivity);
+                break;
+            case R.id.nav_help:
+                Intent helpActivity = new Intent(getApplicationContext(), com.example.jansenmo.meetmeapp.helpActivity.class);
+                startActivity(helpActivity);
                 break;
             default:
                 fragmentClass = MapsActivity.class;

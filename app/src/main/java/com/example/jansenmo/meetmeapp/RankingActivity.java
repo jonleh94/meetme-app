@@ -243,6 +243,10 @@ public class RankingActivity extends AppCompatActivity {
                 Intent profileActivity = new Intent(getApplicationContext(), RankingActivity.class);
                 startActivity(profileActivity);
                 break;
+            case R.id.nav_help:
+                Intent helpActivity = new Intent(getApplicationContext(), com.example.jansenmo.meetmeapp.helpActivity.class);
+                startActivity(helpActivity);
+                break;
             default:
                 fragmentClass = MapsActivity.class;
         }
