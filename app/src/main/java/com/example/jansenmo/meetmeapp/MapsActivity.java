@@ -186,6 +186,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 startActivity(helpActivity);
                 break;
             case R.id.nav_logout:
+               // PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit().clear().commit();
                 Intent logoutActivity = new Intent(getApplicationContext(), LoginActivity.class);
                 startActivity(logoutActivity);
                 break;
