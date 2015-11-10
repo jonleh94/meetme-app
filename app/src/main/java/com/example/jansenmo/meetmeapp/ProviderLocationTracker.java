@@ -3,6 +3,7 @@ package com.example.jansenmo.meetmeapp;
 /**
  * Created by jansenmo on 08.11.2015.
  */
+
 import android.content.Context;
 import android.location.Location;
 import android.location.LocationListener;
@@ -19,10 +20,12 @@ public class ProviderLocationTracker implements LocationListener, LocationTracke
 
     private LocationManager lm;
 
-    public enum ProviderType{
+    public enum ProviderType {
         NETWORK,
         GPS
-    };
+    }
+
+    ;
     private String provider;
 
     private Location lastLocation;
@@ -33,17 +36,16 @@ public class ProviderLocationTracker implements LocationListener, LocationTracke
     private LocationUpdateListener listener;
 
     public ProviderLocationTracker(Context context, ProviderType type) {
-        lm = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
-        if(type == ProviderType.NETWORK){
+        lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        if (type == ProviderType.NETWORK) {
             provider = LocationManager.NETWORK_PROVIDER;
-        }
-        else{
+        } else {
             provider = LocationManager.GPS_PROVIDER;
         }
     }
 
-    public void start(){
-        if(isRunning){
+    public void start() {
+        if (isRunning) {
             //Already running, do nothing
             return;
         }
@@ -63,43 +65,43 @@ public class ProviderLocationTracker implements LocationListener, LocationTracke
     }
 
 
-    public void stop(){
-        if(isRunning){
+    public void stop() {
+        if (isRunning) {
             lm.removeUpdates(this);
             isRunning = false;
             listener = null;
         }
     }
 
-    public boolean hasLocation(){
-        if(lastLocation == null){
+    public boolean hasLocation() {
+        if (lastLocation == null) {
             return false;
         }
-        if(System.currentTimeMillis() - lastTime > 5 * MIN_UPDATE_TIME){
+        if (System.currentTimeMillis() - lastTime > 5 * MIN_UPDATE_TIME) {
             return false; //stale
         }
         return true;
     }
 
-    public boolean hasPossiblyStaleLocation(){
-        if(lastLocation != null){
+    public boolean hasPossiblyStaleLocation() {
+        if (lastLocation != null) {
             return true;
         }
-        return lm.getLastKnownLocation(provider)!= null;
+        return lm.getLastKnownLocation(provider) != null;
     }
 
-    public Location getLocation(){
-        if(lastLocation == null){
+    public Location getLocation() {
+        if (lastLocation == null) {
             return null;
         }
-        if(System.currentTimeMillis() - lastTime > 5 * MIN_UPDATE_TIME){
+        if (System.currentTimeMillis() - lastTime > 5 * MIN_UPDATE_TIME) {
             return null; //stale
         }
         return lastLocation;
     }
 
-    public Location getPossiblyStaleLocation(){
-        if(lastLocation != null){
+    public Location getPossiblyStaleLocation() {
+        if (lastLocation != null) {
             return lastLocation;
         }
         return lm.getLastKnownLocation(provider);
@@ -107,7 +109,7 @@ public class ProviderLocationTracker implements LocationListener, LocationTracke
 
     public void onLocationChanged(Location newLoc) {
         long now = System.currentTimeMillis();
-        if(listener != null){
+        if (listener != null) {
             listener.onUpdate(lastLocation, lastTime, newLoc, now);
         }
         lastLocation = newLoc;

@@ -109,6 +109,7 @@ public class RankingActivity extends AppCompatActivity {
                     }
                     return scoreArray;
                 }
+
                 // wait for asynctask to finish
                 protected void onPostExecute(ArrayList<Score> scoreArray) {
                     setLeaderboard(scoreArray);
@@ -229,11 +230,8 @@ public class RankingActivity extends AppCompatActivity {
     }
 
     public void selectDrawerItem(MenuItem menuItem) {
-        // Create a new fragment and specify the planet to show based on
-        // position
-        Fragment fragment = null;
 
-        Class fragmentClass;
+
         switch (menuItem.getItemId()) {
             case R.id.nav_map:
                 Intent mapsActivity = new Intent(this, MapsActivity.class);
@@ -247,8 +245,13 @@ public class RankingActivity extends AppCompatActivity {
                 Intent helpActivity = new Intent(getApplicationContext(), com.example.jansenmo.meetmeapp.helpActivity.class);
                 startActivity(helpActivity);
                 break;
+            case R.id.nav_logout:
+                Intent logoutActivity = new Intent(getApplicationContext(), LoginActivity.class);
+                startActivity(logoutActivity);
+                break;
             default:
-                fragmentClass = MapsActivity.class;
+                Intent defaultActivity = new Intent(this, MapsActivity.class);
+                startActivity(defaultActivity);
         }
 
 

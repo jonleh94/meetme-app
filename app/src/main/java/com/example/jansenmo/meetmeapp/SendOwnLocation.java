@@ -9,6 +9,7 @@ data.put("key2", "value2");
 AsyncHttpPost asyncHttpPost = new AsyncHttpPost(data);
 asyncHttpPost.execute("http://example.com");
 */
+
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
@@ -31,8 +32,6 @@ import android.os.AsyncTask;
 public class SendOwnLocation extends AsyncTask<String, String, String> {
 
 
-
-
     /**
      * background
      */
@@ -46,24 +45,16 @@ public class SendOwnLocation extends AsyncTask<String, String, String> {
 
             HttpResponse response = client.execute(post);
             StatusLine statusLine = response.getStatusLine();
-            if(statusLine.getStatusCode() == HttpURLConnection.HTTP_OK){
+            if (statusLine.getStatusCode() == HttpURLConnection.HTTP_OK) {
                 result = EntityUtils.toByteArray(response.getEntity());
                 str = new String(result, "UTF-8");
             }
-        }
-        catch (UnsupportedEncodingException e) {
+        } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
         }
         return str;
     }
 
-    /**
-     * on getting result
-     */
-    @Override
-    protected void onPostExecute(String result) {
-        // something...
-    }
+
 }

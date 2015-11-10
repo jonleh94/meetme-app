@@ -2,13 +2,14 @@ package com.example.jansenmo.meetmeapp;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -26,7 +27,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import java.util.HashMap;
+
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, LocationTracker {
 
@@ -36,13 +37,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     double longitude; // longitude
     ProviderLocationTracker gps;
 
-
-    String ip = "192.168.0.103";
-    String port = "8087";
-
-    // TODO change when login ready
-    String username = "mojansen";
-    String password = "1234";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,6 +93,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
                 // Send position to database
+
+                String ip = "192.168.0.103";
+                String port = "8087";
+
+                // get userdata from login
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+
+                String username = prefs.getString("username", null);
+                String password = prefs.getString("password", null);
+
+
                 String lat = Double.toString(latitude);
                 String lng = Double.toString(longitude);
                 SendOwnLocation sendOwnLocation = new SendOwnLocation();
@@ -165,11 +170,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     public void selectDrawerItem(MenuItem menuItem) {
-        // Create a new fragment and specify the planet to show based on
-        // position
-        Fragment fragment = null;
 
-        Class fragmentClass;
+
         switch (menuItem.getItemId()) {
             case R.id.nav_map:
                 Intent mapsActivity = new Intent(this, MapsActivity.class);
@@ -180,11 +182,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 startActivity(rankingActivity);
                 break;
             case R.id.nav_help:
-                Intent helpActivity = new Intent(getApplicationContext(), com.example.jansenmo.meetmeapp.helpActivity.class);
+                Intent helpActivity = new Intent(getApplicationContext(), helpActivity.class);
                 startActivity(helpActivity);
                 break;
+            case R.id.nav_logout:
+                Intent logoutActivity = new Intent(getApplicationContext(), LoginActivity.class);
+                startActivity(logoutActivity);
+                break;
             default:
-                fragmentClass = MapsActivity.class;
+                Intent defaultActivity = new Intent(this, MapsActivity.class);
+                startActivity(defaultActivity);
         }
 
 
