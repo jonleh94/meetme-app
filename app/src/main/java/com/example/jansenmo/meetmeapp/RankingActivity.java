@@ -60,14 +60,17 @@ public class RankingActivity extends AppCompatActivity{
         // Setup drawer view
         setupDrawerContent(vDrawer);
 
+        //Change to TeamScoreboard
         teamButton = (Button) this.findViewById(R.id.teamButton);
         teamButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 stk.removeAllViews();
+                //@TODO Call TeamScoreboard methode
             }
         });
 
+        //Change to UserScoreboard
         userButton = (Button) this.findViewById(R.id.userButton);
         userButton.setOnClickListener(new View.OnClickListener() {
             @Override
