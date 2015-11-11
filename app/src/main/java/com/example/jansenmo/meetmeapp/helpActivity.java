@@ -93,7 +93,7 @@ public class helpActivity extends AppCompatActivity implements NavigationView.On
 
         switch (menuItem.getItemId()) {
             case R.id.nav_map:
-                Intent mapsActivity = new Intent(this, MapsActivity.class);
+                Intent mapsActivity = new Intent(getApplicationContext(), MapsActivity.class);
                 startActivity(mapsActivity);
                 break;
             case R.id.nav_ranking:
@@ -101,7 +101,7 @@ public class helpActivity extends AppCompatActivity implements NavigationView.On
                 startActivity(rankingActivity);
                 break;
             case R.id.nav_help:
-                Intent helpActivity = new Intent(getApplicationContext(), com.example.jansenmo.meetmeapp.helpActivity.class);
+                Intent helpActivity = new Intent(this, helpActivity.class);
                 startActivity(helpActivity);
                 break;
             case R.id.nav_logout:
@@ -109,7 +109,7 @@ public class helpActivity extends AppCompatActivity implements NavigationView.On
                 startActivity(logoutActivity);
                 break;
             default:
-                Intent defaultActivity = new Intent(this, MapsActivity.class);
+                Intent defaultActivity = new Intent(getApplicationContext(), MapsActivity.class);
                 startActivity(defaultActivity);
         }
 

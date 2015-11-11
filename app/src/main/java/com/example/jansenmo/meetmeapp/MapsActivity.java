@@ -86,23 +86,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onUpdate(Location oldLoc, long oldTime, Location newLoc,
                                  long newTime) {
 
-                longitude = newLoc.getLongitude();
-                latitude = newLoc.getLatitude();
-                LatLng myPosition = new LatLng(latitude, longitude);
-                Marker myposition = mMap.addMarker(new MarkerOptions().position(myPosition).title("MY POSITION"));
-
-
-                // Send position to database
-
-                String ip = "192.168.0.103";
-                String port = "8087";
-
                 // get userdata from login
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
                 String username = prefs.getString("username", null);
                 String password = prefs.getString("password", null);
 
+                longitude = newLoc.getLongitude();
+                latitude = newLoc.getLatitude();
+                LatLng myPosition = new LatLng(latitude, longitude);
+                Marker myposition = mMap.addMarker(new MarkerOptions().position(myPosition).title("Location for: "+username));
+
+
+                // Send position to database
+
+                String ip = "192.168.0.103";
+                String port = "8087";
 
                 String lat = Double.toString(latitude);
                 String lng = Double.toString(longitude);
@@ -186,12 +185,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 startActivity(helpActivity);
                 break;
             case R.id.nav_logout:
-               // PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit().clear().commit();
                 Intent logoutActivity = new Intent(getApplicationContext(), LoginActivity.class);
                 startActivity(logoutActivity);
                 break;
             default:
-                Intent defaultActivity = new Intent(this, MapsActivity.class);
+                Intent defaultActivity = new Intent(getApplicationContext(), MapsActivity.class);
                 startActivity(defaultActivity);
         }
 

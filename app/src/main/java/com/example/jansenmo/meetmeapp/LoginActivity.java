@@ -32,7 +32,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
     private Button layoutbutton;
     private EditText username;
     private EditText password;
-    private Boolean validateCode;
+    private Boolean validateCode = null;
     private Context context = this;
     String ip = "192.168.0.103";
     String port = "8087";
@@ -51,7 +51,6 @@ public class LoginActivity extends Activity implements View.OnClickListener {
 
 
     public void onClick(View v) {
-        Button button = (Button) v;
         password = (EditText) findViewById(R.id.password);
         username = (EditText) findViewById(R.id.username);
 
@@ -67,6 +66,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
         if (v == layoutbutton) {
             // Get GetRequest to validate user input
             getCheck();
+
         }
     }
 
@@ -114,11 +114,11 @@ public class LoginActivity extends Activity implements View.OnClickListener {
     // Check get response
     public void processValidation(String checkString) {
         validateCode = Boolean.valueOf(checkString);
+        Toast toast = new Toast(getApplicationContext());
         if (validateCode) {
             Intent mapsActivity = new Intent(getApplicationContext(), MapsActivity.class);
             startActivity(mapsActivity);
-        } else {
-            Toast toast = new Toast(getApplicationContext());
+        } else if (!validateCode) {
             toast.makeText(LoginActivity.this, "Unknown User or Wrong Password", toast.LENGTH_SHORT).show();
         }
     }

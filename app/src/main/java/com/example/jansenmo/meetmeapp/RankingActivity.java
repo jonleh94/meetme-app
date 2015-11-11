@@ -34,6 +34,7 @@ import java.util.ArrayList;
 public class RankingActivity extends AppCompatActivity{
     private DrawerLayout drawer;
 
+    int count = 0;
     private Context context = this;
     private static URL requestUrl;
     public String[] rank = new String[10];
@@ -146,10 +147,12 @@ public class RankingActivity extends AppCompatActivity{
 
 
     public void setLeaderboard(ArrayList<Score> userArray) {
+
         for (int i = 0; i < userArray.size(); i++) {
             rank[i] = String.valueOf(i + 1);
             score[i] = String.valueOf(userArray.get(i).score);
             user[i] = userArray.get(i).username;
+            count++;
         }
         init(rank, user, score);
     }
@@ -180,7 +183,7 @@ public class RankingActivity extends AppCompatActivity{
         tbrow0.setPadding(0, 0, 0, 0);
         stk.addView(tbrow0);
 
-        for (int i = 0; i < user.length; i++) {
+        for (int i = 0; i < count; i++) {
 
             int fontSize = 20;
             TableRow tbrow = new TableRow(this);
@@ -258,15 +261,15 @@ public class RankingActivity extends AppCompatActivity{
 
         switch (menuItem.getItemId()) {
             case R.id.nav_map:
-                Intent mapsActivity = new Intent(this, MapsActivity.class);
+                Intent mapsActivity = new Intent(getApplicationContext(), MapsActivity.class);
                 startActivity(mapsActivity);
                 break;
             case R.id.nav_ranking:
-                Intent profileActivity = new Intent(getApplicationContext(), RankingActivity.class);
-                startActivity(profileActivity);
+                Intent rankingActivity = new Intent(this, RankingActivity.class);
+                startActivity(rankingActivity);
                 break;
             case R.id.nav_help:
-                Intent helpActivity = new Intent(getApplicationContext(), com.example.jansenmo.meetmeapp.helpActivity.class);
+                Intent helpActivity = new Intent(getApplicationContext(), helpActivity.class);
                 startActivity(helpActivity);
                 break;
             case R.id.nav_logout:
@@ -274,7 +277,7 @@ public class RankingActivity extends AppCompatActivity{
                 startActivity(logoutActivity);
                 break;
             default:
-                Intent defaultActivity = new Intent(this, MapsActivity.class);
+                Intent defaultActivity = new Intent(getApplicationContext(), MapsActivity.class);
                 startActivity(defaultActivity);
         }
 
