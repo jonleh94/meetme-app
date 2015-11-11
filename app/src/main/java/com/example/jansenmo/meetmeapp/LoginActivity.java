@@ -75,7 +75,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
 
         if (true) {
             new AsyncTask<String, String, String>() {
-                ArrayList<Score> scoreArray = null;
+
 
                 @Override
                 protected String doInBackground(String... uri) {
