@@ -46,8 +46,12 @@ import org.apache.http.util.EntityUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
 
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, LocationTracker {
@@ -70,6 +74,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     String port = "8087";
     String postMeetMe = "meetmeserver/api/meetme";
     String getMeetMe = "meetmeserver/api/meetme";
+    String getOtherLoc = "meetmeserver/api/geo/list";
+    URL requestUrl;
 
 
     @Override
@@ -123,6 +129,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         // get own location
         ownLocation();
+        // get location of other user
+        otherLocation();
 
 
     }
@@ -250,7 +258,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 // Send position to database
 
-                String ipu =  ip;
+                String ipu = ip;
                 String port = "8087";
 
                 String lat = Double.toString(latitude);
@@ -265,6 +273,61 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         };
         gps.start(listener);
+    }
+
+    public void otherLocation() {
+        context = this;
+
+
+        if (true) {
+            new AsyncTask<String, String, ArrayList<Location>>() {
+                ArrayList<Location> locationArray = null;
+
+                @Override
+                protected ArrayList<Location> doInBackground(String... params) {
+                    InputStream response = null;
+                    try {
+                        requestUrl = new URL("http://" +
+                                ip
+                                + ":"
+                                + port
+                                + "/"
+                                + getOtherLoc);
+
+                    } catch (MalformedURLException e) {
+                        e.printStackTrace();
+                    }
+                    if (requestUrl != null) {
+                        HttpURLConnection urlConnection = null;
+                        try {
+                            urlConnection = (HttpURLConnection) requestUrl.openConnection();
+                            response = urlConnection.getInputStream();
+                            if (response != null) {
+                                ResponseImporter mUserImportierer = new ResponseImporter(); //create new JSON Parser Object
+                                try {
+                                    locationArray = mUserImportierer.readJsonStream(response); //store JSON Objects from JSON Array as OtherUser Objects in userArray
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                            response.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            urlConnection.disconnect();
+                        } finally {
+                            urlConnection.disconnect();
+                        }
+                    }
+                    return locationArray;
+                }
+
+                // wait for asynctask to finish
+                protected void onPostExecute(ArrayList<Location> scoreArray) {
+                    //TODO call method to set marker
+                }
+            }.execute();
+
+        }
     }
 
     @Override

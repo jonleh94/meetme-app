@@ -30,7 +30,7 @@ public class ResponseImporter {
             String test = reader.nextName();
             if (test.equals("scoreBoard")) {
                 objectArray = this.<R>readScoreArray(reader);
-            } else if (test.equals("GeoData")) {
+            } else if (test.equals("geoData")) {
                 objectArray = this.<R>readLocationArray(reader);
             }
         }
