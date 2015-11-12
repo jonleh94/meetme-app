@@ -45,12 +45,15 @@ public class ResponseImporter {
             while (reader.hasNext()) {
                 int score = 0;
                 String username = null;
+                String team = null;
 
                 reader.beginObject();
                 while (reader.hasNext()) {
                     String test = reader.nextName();
                     if (test.equals("score")) {
                         score = reader.nextInt();
+                    } else if (test.equals("team")) {
+                        team = reader.nextString();
                     } else if (test.equals("username")) {
                         username = reader.nextString();
                     } else {
@@ -58,7 +61,7 @@ public class ResponseImporter {
                     }
                 }
                 reader.endObject();
-                scoreArray.add((R) new Score(username, score));
+                scoreArray.add((R) new Score(username, team, score));
             }
         }
         //    }}

@@ -7,11 +7,13 @@ import com.google.android.gms.maps.model.LatLng;
  */
 public class Score {
     String username;
+    String team;
     int score;
 
 
-    public Score(String username, int score) {
+    public Score(String username, String team, int score) {
         this.username = username;
+        this.team = team;
         this.score = score;
     }
 }
