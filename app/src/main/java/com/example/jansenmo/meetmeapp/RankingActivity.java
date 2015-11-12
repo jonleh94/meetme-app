@@ -289,7 +289,7 @@ public class RankingActivity extends AppCompatActivity {
             tbrow = new TableRow(this);
             tbrow.setPadding(0, 0, 0, 0);
             if (i % 2 == 0) {
-                tbrow.setBackgroundColor(Color.parseColor("#90c1ec"));
+                tbrow.setBackgroundColor(Color.parseColor("#C1CDCD"));
             }
             TextView t1v = new TextView(this);
             t1v.setText(rank[i]);
@@ -343,7 +343,7 @@ public class RankingActivity extends AppCompatActivity {
             tbrow = new TableRow(this);
             tbrow.setPadding(0, 0, 0, 0);
             if (i % 2 == 0) {
-                tbrow.setBackgroundColor(Color.parseColor("#90c1ec"));
+                tbrow.setBackgroundColor(Color.parseColor("#C1CDCD"));
             }
             TextView t1v = new TextView(this);
             t1v.setText(rank[i]);
