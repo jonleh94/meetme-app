@@ -1,10 +1,12 @@
 package com.example.jansenmo.meetmeapp;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
@@ -17,7 +19,12 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -27,6 +34,20 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.StatusLine;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
 
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, LocationTracker {
@@ -36,6 +57,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     double latitude; // latitude
     double longitude; // longitude
     ProviderLocationTracker gps;
+    Context context = this;
+    String usern;
+    String meetC;
+    private EditText forUsername;
+    private EditText forCode;
+    String ownCode;
+    Dialog dialog;
+
+
+    String ip = "192.168.0.113";
+    String port = "8087";
+    String postMeetMe = "meetmeserver/api/meetme";
+    String getMeetMe = "meetmeserver/api/meetme";
 
 
     @Override
@@ -47,14 +81,37 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
 
 
-        // Create floating button
-        // TODO Implement MeetMe Process
+        // Create floating button for MeetMe Process
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "*TODO - IMPLEMENT MEETME-PROCESS*", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                // meetme process dialog
+                dialog = new Dialog(context);
+                dialog.setContentView(R.layout.meetme_prompt);
+                dialog.setTitle("Add User");
+                //get own meetMe Code
+                getOwnCode();
+
+
+                Button dialogButton = (Button) dialog.findViewById(R.id.dialogButtonOK);
+                dialogButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        forUsername = (EditText) findViewById(R.id.usernameMeet);
+                        forCode = (EditText) findViewById(R.id.codeMeet);
+
+                        // TODO fix error - userinput is null
+                        usern = "schabi";//forUsername.getText().toString();
+                        meetC = "1769";// forCode.getText().toString();
+                        // send meetMe data to server
+                        processMeetMe();
+
+                        // close dialog
+                        dialog.dismiss();
+                    }
+                });
+                dialog.show();
             }
         });
 
@@ -69,6 +126,100 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         ownLocation();
 
 
+    }
+
+    public void getOwnCode() {
+        context = this;
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        final String username = prefs.getString("username", null);
+
+
+        if (true) {
+            new AsyncTask<String, String, String>() {
+
+
+                @Override
+                protected String doInBackground(String... uri) {
+                    HttpClient httpclient = new DefaultHttpClient();
+                    HttpResponse response;
+                    String responseString = null;
+                    try {
+                        response = httpclient.execute(new HttpGet("http://" + ip + ":" + port + "/" + getMeetMe + "/" + username));
+                        StatusLine statusLine = response.getStatusLine();
+                        if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
+                            ByteArrayOutputStream out = new ByteArrayOutputStream();
+                            response.getEntity().writeTo(out);
+                            responseString = out.toString();
+                            out.close();
+                        } else {
+                            //Closes the connection.
+                            response.getEntity().getContent().close();
+                            throw new IOException(statusLine.getReasonPhrase());
+                        }
+                    } catch (ClientProtocolException e) {
+                        //TODO Handle problems..
+                    } catch (IOException e) {
+                        //TODO Handle problems..
+                    }
+                    return responseString;
+                }
+
+                @Override
+                protected void onPostExecute(String responseString) {
+                    ownCode = responseString;
+                    TextView text = (TextView) dialog.findViewById(R.id.ownCode);
+                    text.setText("My MeetMe Code: " + ownCode);
+                }
+            }.execute();
+        }
+    }
+
+    public void processMeetMe() {
+        context = this;
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        final String username = prefs.getString("username", null);
+
+
+        if (true) {
+            new AsyncTask<String, String, String>() {
+
+
+                @Override
+                protected String doInBackground(String... params) {
+                    byte[] result = null;
+
+                    String str = null;
+                    HttpClient client = new DefaultHttpClient();
+                    HttpPost post = new HttpPost("http://" + ip + ":" + port + "/" + postMeetMe + "/" + username + "/" + meetC + "/" + usern);// in this case, params[0] is URL
+                    try {
+
+                        HttpResponse response = client.execute(post);
+                        StatusLine statusLine = response.getStatusLine();
+                        if (statusLine.getStatusCode() == HttpURLConnection.HTTP_OK) {
+                            result = EntityUtils.toByteArray(response.getEntity());
+                            str = new String(result, "UTF-8");
+                        }
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    } catch (Exception e) {
+                    }
+
+                    return str;
+                }
+
+                @Override
+                protected void onPostExecute(String responseString) {
+                    Toast toast = new Toast(getApplicationContext());
+                    //TODO check returned string +username?
+                    if(responseString.equals("Operation successful, updated SCORE and RANK for User")){
+                        toast.makeText(MapsActivity.this, "One Point For You!", toast.LENGTH_SHORT).show();
+                    } else {
+                        toast.makeText(MapsActivity.this, responseString, toast.LENGTH_SHORT).show();
+                    }
+
+                }
+            }.execute();
+        }
     }
 
     public void ownLocation() {
@@ -88,19 +239,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 // get userdata from login
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-
                 String username = prefs.getString("username", null);
                 String password = prefs.getString("password", null);
+
 
                 longitude = newLoc.getLongitude();
                 latitude = newLoc.getLatitude();
                 LatLng myPosition = new LatLng(latitude, longitude);
-                Marker myposition = mMap.addMarker(new MarkerOptions().position(myPosition).title("Location for: "+username));
+                Marker myposition = mMap.addMarker(new MarkerOptions().position(myPosition).title("Location for: " + username));
 
 
                 // Send position to database
 
-                String ip = "192.168.0.103";
+                String ip = "192.168.0.113";
                 String port = "8087";
 
                 String lat = Double.toString(latitude);

@@ -54,7 +54,7 @@ public class RankingActivity extends AppCompatActivity {
     public String[] teamscore = new String[2];
     public String[] teamarray = new String[2];
 
-    String ip = "192.168.0.103";
+    String ip = "192.168.0.113";
     String port = "8087";
     String userScoreboardList = "meetmeserver/api/leaderboard/list";
     String teamScoreboardList = "meetmeserver/api/leaderboard/teamscore/";
@@ -158,6 +158,7 @@ public class RankingActivity extends AppCompatActivity {
         if (team.equals("red")) {
             scoreRed = tScore;
             team = "blue";
+
             getTeamScoreboard();
         } else if (team.equals("blue")) {
             scoreBlue = tScore;
@@ -224,7 +225,7 @@ public class RankingActivity extends AppCompatActivity {
     }
 
     public void setTeamLeaderboard() {
-        if (Double.valueOf(scoreBlue) < Double.valueOf(scoreRed)) {
+        if (Integer.valueOf(scoreBlue) < Integer.valueOf(scoreRed)) {
             teamrank[0] = "1";
             teamscore[0] = scoreRed;
             teamarray[0] = "RED";
