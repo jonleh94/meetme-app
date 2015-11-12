@@ -54,7 +54,7 @@ public class RankingActivity extends AppCompatActivity {
     public String[] teamscore = new String[2];
     public String[] teamarray = new String[2];
 
-    String ip = "192.168.0.113";
+    String ip;
     String port = "8087";
     String userScoreboardList = "meetmeserver/api/leaderboard/list";
     String teamScoreboardList = "meetmeserver/api/leaderboard/teamscore/";
@@ -75,6 +75,8 @@ public class RankingActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.table);
+
+        ip = ((NetworkSettings) this.getApplication()).getIpAddress();
 
         // implement navigation drawer
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

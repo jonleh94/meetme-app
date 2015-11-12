@@ -60,13 +60,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     Context context = this;
     String usern;
     String meetC;
-    private EditText forUsername;
-    private EditText forCode;
+    EditText forUsername;
+    EditText forCode;
     String ownCode;
     Dialog dialog;
 
 
-    String ip = "192.168.0.113";
+    String ip;
     String port = "8087";
     String postMeetMe = "meetmeserver/api/meetme";
     String getMeetMe = "meetmeserver/api/meetme";
@@ -76,6 +76,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
+        ip = ((NetworkSettings) this.getApplication()).getIpAddress();
+
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
@@ -85,7 +87,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View v) {
                 // meetme process dialog
                 dialog = new Dialog(context);
                 dialog.setContentView(R.layout.meetme_prompt);
@@ -98,15 +100,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 dialogButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        forUsername = (EditText) findViewById(R.id.usernameMeet);
-                        forCode = (EditText) findViewById(R.id.codeMeet);
-
-                        // TODO fix error - userinput is null
-                        usern = "schabi";//forUsername.getText().toString();
-                        meetC = "1769";// forCode.getText().toString();
+                        forUsername = (EditText) dialog.findViewById(R.id.usernameMeet);
+                        forCode = (EditText) dialog.findViewById(R.id.codeMeet);
+                        usern = forUsername.getText().toString();
+                        meetC = forCode.getText().toString();
                         // send meetMe data to server
                         processMeetMe();
-
                         // close dialog
                         dialog.dismiss();
                     }
@@ -211,11 +210,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 protected void onPostExecute(String responseString) {
                     Toast toast = new Toast(getApplicationContext());
                     //TODO check returned string +username?
-                    if(responseString.equals("Operation successful, updated SCORE and RANK for User")){
-                        toast.makeText(MapsActivity.this, "One Point For You!", toast.LENGTH_SHORT).show();
-                    } else {
+                    //if(responseString.equals("Operation successful, updated SCORE and RANK for User")){
+                    toast.makeText(MapsActivity.this, "One Point For You!", toast.LENGTH_SHORT).show();
+                    /*} else {
                         toast.makeText(MapsActivity.this, responseString, toast.LENGTH_SHORT).show();
-                    }
+                    }*/
 
                 }
             }.execute();
@@ -251,13 +250,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 // Send position to database
 
-                String ip = "192.168.0.113";
+                String ipu =  ip;
                 String port = "8087";
 
                 String lat = Double.toString(latitude);
                 String lng = Double.toString(longitude);
                 SendOwnLocation sendOwnLocation = new SendOwnLocation();
-                sendOwnLocation.execute("http://" + ip + ":" + port + "/meetmeserver/api/geo/" + username + "/" + password + "/" + lat + "/" + lng);
+                sendOwnLocation.execute("http://" + ipu + ":" + port + "/meetmeserver/api/geo/" + username + "/" + password + "/" + lat + "/" + lng);
 
 
                 // Set focus on myPosition

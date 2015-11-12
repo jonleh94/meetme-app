@@ -34,7 +34,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
     private EditText password;
     private Boolean validateCode = null;
     private Context context = this;
-    String ip = "192.168.0.113";
+    String ip;
     String port = "8087";
     String usern;
     String pass;
@@ -43,6 +43,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
+        ip = ((NetworkSettings) this.getApplication()).getIpAddress();
 
         //button starting transmission
         layoutbutton = (Button) this.findViewById(R.id.login_button);
