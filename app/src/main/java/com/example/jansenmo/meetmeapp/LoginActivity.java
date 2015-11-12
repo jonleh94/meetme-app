@@ -34,7 +34,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
     private EditText password;
     private Boolean validateCode = null;
     private Context context = this;
-    String ip = "192.168.0.103";
+    String ip = "192.168.0.113";
     String port = "8087";
     String usern;
     String pass;
@@ -125,5 +125,6 @@ public class LoginActivity extends Activity implements View.OnClickListener {
 
     @Override
     public void onBackPressed() {
+
     }
 }
