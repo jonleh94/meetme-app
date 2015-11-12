@@ -30,6 +30,8 @@ public class ResponseImporter {
             String test = reader.nextName();
             if (test.equals("scoreBoard")) {
                 objectArray = this.<R>readScoreArray(reader);
+            } else if (test.equals("GeoData")) {
+                objectArray = this.<R>readLocationArray(reader);
             }
         }
         return objectArray;
@@ -43,12 +45,15 @@ public class ResponseImporter {
             while (reader.hasNext()) {
                 int score = 0;
                 String username = null;
+                String team = null;
 
                 reader.beginObject();
                 while (reader.hasNext()) {
                     String test = reader.nextName();
                     if (test.equals("score")) {
                         score = reader.nextInt();
+                    } else if (test.equals("team")) {
+                        team = reader.nextString();
                     } else if (test.equals("username")) {
                         username = reader.nextString();
                     } else {
@@ -56,7 +61,7 @@ public class ResponseImporter {
                     }
                 }
                 reader.endObject();
-                scoreArray.add((R) new Score(username, score));
+                scoreArray.add((R) new Score(username, team, score));
             }
         }
         //    }}
@@ -66,6 +71,46 @@ public class ResponseImporter {
         } finally {
             reader.endArray();
             return scoreArray;
+        }
+    }
+
+    public static <R> ArrayList<R> readLocationArray(JsonReader reader) throws
+            IOException, NetworkOnMainThreadException {
+        ArrayList<R> locationArray = new ArrayList();
+        reader.beginArray();
+        try {
+            while (reader.hasNext()) {
+                String latitude = null;
+                String longitude = null;
+                String team = null;
+                String username = null;
+
+                reader.beginObject();
+                while (reader.hasNext()) {
+                    String test = reader.nextName();
+                    if (test.equals("latitude")) {
+                        latitude = reader.nextString();
+                    } else if (test.equals("longitude")) {
+                        longitude = reader.nextString();
+                } else if (test.equals("team")) {
+                        team = reader.nextString();
+                }else if (test.equals("username")) {
+                            username = reader.nextString();
+                }else {
+                        reader.skipValue();
+                    }
+                }
+                reader.endObject();
+                locationArray.add((R) new Location(latitude, longitude, team, username));
+            }
+        }
+        //    }}
+        //catch (IOException e) {System.out.println(e);}
+        catch (NetworkOnMainThreadException e) {
+            e.printStackTrace();
+        } finally {
+            reader.endArray();
+            return locationArray;
         }
     }
 
