@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -22,7 +25,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
+
 
 /**
  * Created by jansenmo on 10.11.2015.
@@ -48,6 +51,8 @@ public class LoginActivity extends Activity implements View.OnClickListener {
         //button starting transmission
         layoutbutton = (Button) this.findViewById(R.id.login_button);
         layoutbutton.setOnClickListener(this);
+
+
     }
 
 

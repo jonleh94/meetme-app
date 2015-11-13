@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
@@ -30,6 +31,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -68,7 +71,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     EditText forCode;
     String ownCode;
     Dialog dialog;
-
+    Circle myCircle;
 
     String ip;
     String port = "8087";
@@ -253,7 +256,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 longitude = newLoc.getLongitude();
                 latitude = newLoc.getLatitude();
                 LatLng myPosition = new LatLng(latitude, longitude);
-                Marker myposition = mMap.addMarker(new MarkerOptions().position(myPosition).title("Location for: " + username));
+                mMap.addMarker(new MarkerOptions().position(myPosition).title("Location for: " + username));
+
+                // add radar
+                CircleOptions circleOptions = new CircleOptions()
+                        .center(myPosition)   //set center
+                        .radius(100)   //set radius in meters
+                        .fillColor(0x55547AFA) //default
+                        .strokeColor(Color.TRANSPARENT)
+                        .strokeWidth(5)
+                        ;
+
+                myCircle = mMap.addCircle(circleOptions);
 
 
                 // Send position to database
