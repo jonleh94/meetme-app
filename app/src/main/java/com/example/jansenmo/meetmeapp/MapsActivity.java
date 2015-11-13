@@ -1,5 +1,7 @@
 package com.example.jansenmo.meetmeapp;
 
+import android.animation.IntEvaluator;
+import android.animation.ValueAnimator;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -12,7 +14,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -20,15 +21,16 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.Circle;
@@ -55,6 +57,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Map;
 
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, LocationTracker {
@@ -81,10 +84,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     URL requestUrl;
 
 
+    MapView maView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
+
+
+
         ip = ((NetworkSettings) this.getApplication()).getIpAddress();
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -256,22 +264,35 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 longitude = newLoc.getLongitude();
                 latitude = newLoc.getLatitude();
                 LatLng myPosition = new LatLng(latitude, longitude);
-                mMap.addMarker(new MarkerOptions().position(myPosition).title("Location for: " + username));
+                Marker maker = mMap.addMarker(new MarkerOptions().position(myPosition).title("Location for: " + username));
+
+
 
                 // add radar
-                CircleOptions circleOptions = new CircleOptions()
-                        .center(myPosition)   //set center
-                        .radius(100)   //set radius in meters
-                        .fillColor(0x55547AFA) //default
-                        .strokeColor(Color.TRANSPARENT)
-                        .strokeWidth(5)
-                        ;
+                final Circle circle = mMap.addCircle(new CircleOptions()
+                        .center(myPosition)
+                        .radius(100)
+                        .strokeColor(0x55547AFA)
+                        .strokeWidth(5));
 
-                myCircle = mMap.addCircle(circleOptions);
-
+                ValueAnimator vAnimator = new ValueAnimator();
+                vAnimator.setRepeatCount(ValueAnimator.INFINITE);
+                vAnimator.setRepeatMode(ValueAnimator.RESTART);  /* PULSE */
+                vAnimator.setIntValues(0, 100);
+                vAnimator.setDuration(1500);
+                vAnimator.setEvaluator(new IntEvaluator());
+                vAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
+                vAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                    @Override
+                    public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                        float animatedFraction = valueAnimator.getAnimatedFraction();
+                        // Log.e("", "" + animatedFraction);
+                        circle.setRadius(animatedFraction * 100);
+                    }
+                });
+                vAnimator.start();
 
                 // Send position to database
-
                 String ipu = ip;
                 String port = "8087";
 
@@ -288,6 +309,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         };
         gps.start(listener);
     }
+
 
     public void otherLocation() {
         context = this;

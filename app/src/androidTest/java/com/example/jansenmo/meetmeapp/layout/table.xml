@@ -1,0 +1,118 @@
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
+    android:layout_width="fill_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:openDrawer="start">
+
+<ScrollView
+    android:id="@+id/scrollView1"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignParentLeft="true"
+    android:fillViewport="false">
+
+
+
+        <HorizontalScrollView
+            android:id="@+id/hscrll1"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:padding="0px"
+            android:layout_margin="0px"
+            android:fillViewport="true"
+            >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fillViewport="true">
+
+
+                <TableLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingTop="0px"
+                    android:layout_marginTop="0px"
+                    >
+
+                    <TableRow
+                        android:layout_width="fill_parent"
+                        android:layout_height="match_parent"
+
+                        android:layout_marginTop= "-7dp">
+
+                        <Button
+                            android:layout_width="0px"
+                            android:layout_height="wrap_content"
+                            android:text="User"
+                            android:id="@+id/userButton"
+                            android:layout_weight=".50"
+                            android:layout_marginRight="-4.5dp"
+                            android:layout_marginLeft="-4.5dp"
+                            android:background="@drawable/rect_button"
+                            android:textSize="20dp"
+                            android:textStyle="bold"
+                            />
+
+                        <EditText
+                            android:layout_width="10px"
+                            android:layout_height="fill_parent"
+                            android:id="@+id/editText"
+                            android:clickable="false"
+                            android:editable="false"
+                            android:enabled="false"
+                            android:focusable="false"
+                            android:foreground="#000000"
+                            android:background="#000000" />
+
+                        <Button
+                            android:layout_width="0px"
+                            android:layout_height="wrap_content"
+                            android:text="Team"
+                            android:id="@+id/teamButton"
+                            android:layout_weight=".50"
+                            android:layout_marginRight="-4.5dp"
+                            android:layout_marginLeft="-4.5dp"
+                            android:background="@drawable/rect_button"
+                            android:textSize="20dp"
+                            android:textStyle="bold"
+                            />
+
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center_horizontal"
+
+                        >
+
+                        <TableLayout
+                            android:id="@+id/table_main"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_centerHorizontal="true"
+                            >
+                        </TableLayout>
+
+                    </TableRow>
+                </TableLayout>
+            </LinearLayout>
+        </HorizontalScrollView>
+    </ScrollView>
+
+
+
+    <android.support.design.widget.NavigationView
+        android:id="@+id/nav_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:fitsSystemWindows="true"
+        app:headerLayout="@layout/nav_header_main"
+        app:menu="@menu/activity_main_drawer" />
+
+</android.support.v4.widget.DrawerLayout>

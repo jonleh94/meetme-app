@@ -146,5 +146,8 @@
     <orderEntry type="library" exported="" name="play-services-maps-8.1.0" level="project" />
     <orderEntry type="library" exported="" name="appcompat-v7-22.2.1" level="project" />
     <orderEntry type="library" exported="" name="play-services-location-8.1.0" level="project" />
+    <orderEntry type="library" exported="" name="effects-android-22" level="project" />
+    <orderEntry type="library" exported="" name="usb-android-22" level="project" />
+    <orderEntry type="library" exported="" name="maps-android-22" level="project" />
   </component>
 </module>
