@@ -2,8 +2,10 @@ package com.example.jansenmo.meetmeapp;
 
 import android.animation.IntEvaluator;
 import android.animation.ValueAnimator;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -33,6 +35,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
@@ -58,6 +61,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, LocationTracker {
@@ -74,6 +79,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     EditText forCode;
     String ownCode;
     Dialog dialog;
+    Dialog scoreDialog;
     Circle myCircle;
 
     String ip;
@@ -90,7 +96,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
-
 
 
         ip = ((NetworkSettings) this.getApplication()).getIpAddress();
@@ -235,6 +240,27 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         toast.makeText(MapsActivity.this, responseString, toast.LENGTH_SHORT).show();
                     }*/
 
+                   /* final AlertDialog.Builder alertadd = new AlertDialog.Builder(MapsActivity.this);
+                    LayoutInflater factory = LayoutInflater.from(MapsActivity.this);
+                    final View view = factory.inflate(R.layout.getpoint_animation, null);
+                    alertadd.setView(view);
+
+                    final AlertDialog alert = alertadd.create();
+                    alert.show();
+
+
+                    final Timer t = new Timer();
+                    t.schedule(new TimerTask() {
+                        public void run() {
+                            alert.dismiss();
+                            t.cancel();
+                        }
+                    }, 2000);
+
+                    // close dialog
+                    dialog.dismiss();
+
+*/
                 }
             }.execute();
         }
@@ -267,13 +293,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Marker maker = mMap.addMarker(new MarkerOptions().position(myPosition).title("Location for: " + username));
 
 
-
                 // add radar
                 final Circle circle = mMap.addCircle(new CircleOptions()
-                        .center(myPosition)
-                        .radius(100)
-                        .strokeColor(0x55547AFA)
-                        .strokeWidth(5));
+                                .center(myPosition)
+                                .radius(100)
+                                .strokeColor(0x55547AFA)
+                                .strokeWidth(5)
+                );
 
                 ValueAnimator vAnimator = new ValueAnimator();
                 vAnimator.setRepeatCount(ValueAnimator.INFINITE);
@@ -302,9 +328,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 sendOwnLocation.execute("http://" + ipu + ":" + port + "/meetmeserver/api/geo/" + username + "/" + password + "/" + lat + "/" + lng);
 
 
+                CameraPosition cameraPosition = new CameraPosition.Builder()
+                        .target(myPosition) // Sets the center of the map to
+                        .zoom(18)                   // Sets the zoom
+                        .bearing(0) // Sets the orientation of the camera to east
+                        .tilt(30)    // Sets the tilt of the camera to 30 degrees
+                        .build();    // Creates a CameraPosition from the builder
+
                 // Set focus on myPosition
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(myPosition));
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myPosition, 18));
+                mMap.animateCamera(CameraUpdateFactory.newCameraPosition(
+                        cameraPosition));
             }
         };
         gps.start(listener);
