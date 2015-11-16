@@ -424,15 +424,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 }
 
     public void initMarkers(Double[] lats, Double[] lngs, String[] users, String[] team) {
-
-        for (int i = 0; i < count; i++) {
-
-            LatLng userPosition = new LatLng(lats[i], lngs[i]);
             /*
             if (usermarker != null) {
                 usermarker.remove();
+                mMap.clear();
             }
             */
+        for (int i = 0; i < count; i++) {
+            LatLng userPosition = new LatLng(lats[i], lngs[i]);
             if (team[i] == "blue") {
                     usermarker = mMap.addMarker(new MarkerOptions().position(userPosition).title("Location for: " + users[i]).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)).draggable(true));
             }
