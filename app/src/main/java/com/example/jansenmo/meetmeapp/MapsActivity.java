@@ -2,10 +2,13 @@ package com.example.jansenmo.meetmeapp;
 
 import android.animation.IntEvaluator;
 import android.animation.ValueAnimator;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
@@ -58,6 +61,9 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, LocationTracker {
@@ -76,7 +82,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     EditText forCode;
     String ownCode;
     Dialog dialog;
-    Circle circle;
+    Dialog scoreDialog;
+    Circle myCircle;
     String ip;
     String port = "8087";
     String postMeetMe = "meetmeserver/api/meetme";
@@ -84,13 +91,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     String getOtherLoc = "meetmeserver/api/geo/list";
     URL requestUrl;
 
+    public int count = 0;
+    public Double[] lats = new Double[50];
+    public Double[] lngs = new Double[50];
+    public String[] users = new String[50];
+    public String[] team = new String[50];
 
-    ArrayList<Double> lngs = new ArrayList<>();
-    ArrayList<String> users = new ArrayList<>();
-    ArrayList<String> team = new ArrayList<>();
-    ArrayList<Double> lats = new ArrayList<>();
-    ArrayList<String> timestamp = new ArrayList<>();
-
+    MapView maView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -281,7 +288,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onUpdate(Location oldLoc, long oldTime, Location newLoc,
                                  long newTime) {
 
-
                 // get userdata from login
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                 String username = prefs.getString("username", null);
@@ -294,12 +300,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 if (mymarker != null) {
                     mymarker.remove();
-                    circle.remove();
                 }
                 mymarker = mMap.addMarker(new MarkerOptions().position(myPosition).title("Location for: " + username).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)).draggable(true));
-                //otherLocation();
+
                 // add radar
-                circle = mMap.addCircle(new CircleOptions()
+                final Circle circle = mMap.addCircle(new CircleOptions()
                                 .center(myPosition)
                                 .radius(100)
                                 .strokeColor(0x55547AFA)
@@ -397,8 +402,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
 
                 // wait for asynctask to finish
-                protected void onPostExecute(ArrayList<com.example.jansenmo.meetmeapp.Location> scoreArray) {
-                    setUserMarkers(scoreArray);
+                protected void onPostExecute(ArrayList<com.example.jansenmo.meetmeapp.Location> locationArray) {
+                    //TODO call method to set marker
+                    setUserMarkers(locationArray);
                 }
             }.execute();
 
@@ -407,42 +413,34 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public void setUserMarkers(ArrayList<com.example.jansenmo.meetmeapp.Location> locationArray) {   //geht das oder muss es userArray sein?
 
-        for (int i = 0; i < locationArray.size(); i++) {
-            lats.add(Double.parseDouble(locationArray.get(i).latitude));
-            lngs.add(Double.parseDouble(locationArray.get(i).longitude));
-            users.add(locationArray.get(i).username);
-            team.add(locationArray.get(i).team);
-            timestamp.add(locationArray.get(i).timestamp);
-
-        }
-
-        initMarkers(lats, lngs, users, team);
+    for (int i = 0; i < locationArray.size(); i++) {
+        lats[i] = Double.valueOf(locationArray.get(i).latitude);
+        lngs[i] = Double.valueOf(locationArray.get(i).longitude);
+        users[i] = locationArray.get(i).username;
+        team[i] = locationArray.get(i).team;
+        count++;
     }
+    initMarkers(lats, lngs, users, team);
+}
 
-    public void initMarkers(ArrayList<Double> lats, ArrayList<Double> lngs, ArrayList<String> users, ArrayList<String> team) {
-/*
-        if (usermarker != null) {
-            mMap.clear();
-        }
-*/
+    public void initMarkers(Double[] lats, Double[] lngs, String[] users, String[] team) {
 
-        // get username from shared preferences
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        String username = prefs.getString("username", null);
+        for (int i = 0; i < count; i++) {
 
-        for (int i = 0; i < users.size(); i++) {
-
-            LatLng userPosition = new LatLng(lngs.get(i), lats.get(i));
-            if (!users.get(i).equals(username)) {
-                if (lngs.get(i) != 0 && lats.get(i) != 0) {
-                    if (team.get(i).equals("blue")) {
-                        usermarker = mMap.addMarker(new MarkerOptions().position(userPosition).title("Location for: " + users.get(i)).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)).draggable(true));
-                    } else if (team.get(i).equals("red")) {
-                        usermarker = mMap.addMarker(new MarkerOptions().position(userPosition).title("Location for: " + users.get(i)).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)).draggable(true));
-                    } else {
-                        usermarker = mMap.addMarker(new MarkerOptions().position(userPosition).title("Location for: " + users.get(i)).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)).draggable(true));
-                    }
-                }
+            LatLng userPosition = new LatLng(lats[i], lngs[i]);
+            /*
+            if (usermarker != null) {
+                usermarker.remove();
+            }
+            */
+            if (team[i] == "blue") {
+                    usermarker = mMap.addMarker(new MarkerOptions().position(userPosition).title("Location for: " + users[i]).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)).draggable(true));
+            }
+            else if (team[i] == "red"){
+                    usermarker = mMap.addMarker(new MarkerOptions().position(userPosition).title("Location for: " + users[i]).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)).draggable(true));
+            }
+            else {
+                    usermarker = mMap.addMarker(new MarkerOptions().position(userPosition).title("Location for: " + users[i]).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)).draggable(true));
             }
         }
     }
