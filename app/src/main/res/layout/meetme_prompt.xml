@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="#676eef">
+    android:background="#dbdbdb">
 
 
     <EditText
@@ -16,7 +16,7 @@
         android:gravity="center_horizontal"
         android:hint="Foreign Username"
         android:inputType="textPersonName"
-        android:textColorHint="#ffffff"
+        android:textColorHint="#5379fa"
         android:textSize="40px" />
 
     <EditText
@@ -29,7 +29,7 @@
         android:gravity="center_horizontal"
         android:hint="MeetMe Code"
         android:inputType="textPersonName"
-        android:textColorHint="#ffffff"
+        android:textColorHint="#5379fa"
         android:textSize="40px" />
 
     <Button
@@ -38,7 +38,7 @@
         android:layout_height="100px"
         android:layout_below="@+id/codeMeet"
         android:layout_centerHorizontal="true"
-       android:background="@drawable/m_button" />
+        android:background="@drawable/m_button" />
 
     <TextView
         android:id="@+id/ownCode"
@@ -46,7 +46,9 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#5379fa"
+        android:textStyle="bold" />
 
     <Space
         android:layout_width="20px"
