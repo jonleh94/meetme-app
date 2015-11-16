@@ -84,6 +84,7 @@ public class ResponseImporter {
                 String longitude = null;
                 String team = null;
                 String username = null;
+                String timestamp = null;
 
                 reader.beginObject();
                 while (reader.hasNext()) {
@@ -95,13 +96,15 @@ public class ResponseImporter {
                 } else if (test.equals("team")) {
                         team = reader.nextString();
                 }else if (test.equals("username")) {
-                            username = reader.nextString();
+                        username = reader.nextString();
+                    }else if(test.equals("date")){
+                        timestamp = reader.nextString();
                 }else {
                         reader.skipValue();
                     }
                 }
                 reader.endObject();
-                locationArray.add((R) new Location(latitude, longitude, team, username));
+                locationArray.add((R) new Location(latitude, longitude, team, username, timestamp));
             }
         }
         //    }}

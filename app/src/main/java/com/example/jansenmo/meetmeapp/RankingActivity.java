@@ -210,8 +210,6 @@ public class RankingActivity extends AppCompatActivity {
                         } finally {
                             urlConnection.disconnect();
                         }
-
-
                     }
                     return scoreArray;
                 }

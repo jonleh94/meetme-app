@@ -8,12 +8,14 @@ public class Location {
     String longitude;
     String team;
     String username;
+    String timestamp;
 
-    public Location(String latitude, String longitude, String team, String username) {
+    public Location(String latitude, String longitude, String team, String username, String timestamp) {
         this.latitude = latitude;
         this.longitude = longitude;
         this.team = team;
         this.username = username;
+        this.timestamp = timestamp;
     }
 
 
