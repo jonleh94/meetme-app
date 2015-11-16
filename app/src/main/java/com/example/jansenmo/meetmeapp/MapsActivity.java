@@ -35,6 +35,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
@@ -71,6 +72,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private DrawerLayout drawer;
     double latitude; // latitude
     double longitude; // longitude
+    private Marker mymarker;
     ProviderLocationTracker gps;
     Context context = this;
     String usern;
@@ -81,7 +83,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     Dialog dialog;
     Dialog scoreDialog;
     Circle myCircle;
-
     String ip;
     String port = "8087";
     String postMeetMe = "meetmeserver/api/meetme";
@@ -290,8 +291,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 longitude = newLoc.getLongitude();
                 latitude = newLoc.getLatitude();
                 LatLng myPosition = new LatLng(latitude, longitude);
-                Marker maker = mMap.addMarker(new MarkerOptions().position(myPosition).title("Location for: " + username));
 
+                if (mymarker != null) {
+                    mymarker.remove();
+                }
+                mymarker = mMap.addMarker(new MarkerOptions().position(myPosition).title("Location for: " + username).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)).draggable(true));
 
                 // add radar
                 final Circle circle = mMap.addCircle(new CircleOptions()
