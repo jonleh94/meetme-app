@@ -9,10 +9,8 @@
             android:title="Profil" />
         <item android:id="@+id/nav_ranking" android:icon="@android:drawable/ic_menu_sort_by_size"
             android:title="Ranking" />
-        <item android:id="@+id/nav_info" android:icon="@android:drawable/ic_menu_info_details"
-            android:title="Info" />
         <item android:id="@+id/nav_help" android:icon="@android:drawable/ic_menu_help"
-            android:title="Help" />e
+            android:title="Help"/>
     </group>
 
     <item android:title="">
