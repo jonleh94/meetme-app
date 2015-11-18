@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -16,6 +17,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -40,7 +42,7 @@ import java.util.ArrayList;
 /**
  * Created by mayf on 27.10.2015.
  */
-public class RankingActivity extends AppCompatActivity {
+public class UserRankActivity extends AppCompatActivity {
     private DrawerLayout drawer;
 
     //Count table rows for User Ranking
@@ -63,18 +65,17 @@ public class RankingActivity extends AppCompatActivity {
     String scoreBlue;
     String scoreRed;
 
-
     Button teamButton, userButton;
     TableLayout stk;
 
     TableRow tbrow;
-
 
     protected void onCreate(Bundle savedInstanceState) {
 
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.table);
+
 
         ip = ((NetworkSettings) this.getApplication()).getIpAddress();
 
@@ -84,19 +85,23 @@ public class RankingActivity extends AppCompatActivity {
         NavigationView vDrawer = (NavigationView) findViewById(R.id.nav_view);
         // Setup drawer view
         setupDrawerContent(vDrawer);
+        //getUserScoreboard();
 
-        getUserScoreboard();
-
+        rank[0]="10";
+        rank[1]="9";
+        rank[2]="8";
+        user[0]="10";
+        user[1]="9";
+        user[2]="8";
+        initUser(rank, user, score);
         //Change to TeamScoreboard
         teamButton = (Button) this.findViewById(R.id.teamButton);
         teamButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                stk.removeAllViews();
-                tbrow.removeAllViews();
-                team = "red";
-                count = 0;
-                getTeamScoreboard();
+
+                Intent teamRank = new Intent(context, TeamRankActivity.class);
+                startActivity(teamRank);
             }
         });
 
@@ -110,7 +115,6 @@ public class RankingActivity extends AppCompatActivity {
                 getUserScoreboard();
             }
         });
-
 
     }
 
@@ -259,6 +263,7 @@ public class RankingActivity extends AppCompatActivity {
     //set Team table
     public void initTeam(String[] rank, String[] user, String[] score) {
 
+
         int headerFontSize = 37;
         stk = (TableLayout) findViewById(R.id.table_main);
         TableRow tbrow0 = new TableRow(this);
@@ -288,9 +293,6 @@ public class RankingActivity extends AppCompatActivity {
             int fontSize = 20;
             tbrow = new TableRow(this);
             tbrow.setPadding(0, 0, 0, 0);
-            if (i % 2 == 0) {
-                tbrow.setBackgroundColor(Color.parseColor("#C1CDCD"));
-            }
             TextView t1v = new TextView(this);
             t1v.setText(rank[i]);
             t1v.setTextSize(fontSize);
@@ -342,9 +344,7 @@ public class RankingActivity extends AppCompatActivity {
             int fontSize = 20;
             tbrow = new TableRow(this);
             tbrow.setPadding(0, 0, 0, 0);
-            if (i % 2 == 0) {
-                tbrow.setBackgroundColor(Color.parseColor("#C1CDCD"));
-            }
+
             TextView t1v = new TextView(this);
             t1v.setText(rank[i]);
             t1v.setTextSize(fontSize);
@@ -419,7 +419,7 @@ public class RankingActivity extends AppCompatActivity {
                 startActivity(mapsActivity);
                 break;
             case R.id.nav_ranking:
-                Intent rankingActivity = new Intent(this, RankingActivity.class);
+                Intent rankingActivity = new Intent(this, UserRankActivity.class);
                 startActivity(rankingActivity);
                 break;
             case R.id.nav_help:

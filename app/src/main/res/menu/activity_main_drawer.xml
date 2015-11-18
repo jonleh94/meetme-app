@@ -7,8 +7,6 @@
             android:title="Map" />
         <item android:id="@+id/nav_profil" android:icon="@android:drawable/ic_menu_my_calendar"
             android:title="Profil" />
-        <item android:id="@+id/nav_friends" android:icon="@android:drawable/ic_menu_myplaces"
-            android:title="Friends" />
         <item android:id="@+id/nav_ranking" android:icon="@android:drawable/ic_menu_sort_by_size"
             android:title="Ranking" />
         <item android:id="@+id/nav_info" android:icon="@android:drawable/ic_menu_info_details"
