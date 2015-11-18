@@ -28,7 +28,7 @@ public class LogoutProcess {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         final String username = prefs.getString("username", null);
 
-        ip = "192.168.0.113";
+        ip = "192.168.1.78";
 
         new AsyncTask<String, String, String>() {
 
