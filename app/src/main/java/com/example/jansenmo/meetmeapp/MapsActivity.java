@@ -68,7 +68,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     double longitude; // longitude
     private Marker mymarker;
     Marker usermarker;
-    Circle circle;
     ProviderLocationTracker gps;
     Context context = this;
     String usern;
@@ -79,6 +78,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     Dialog dialog;
     Dialog scoreDialog;
     Circle myCircle;
+    Circle circle;
     String ip;
     String port = "8087";
     String postMeetMe = "meetmeserver/api/meetme";
@@ -112,11 +112,29 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onClick(View view) {
                 try {
-                    mMap.moveCamera(CameraUpdateFactory.newLatLng(myPosition));
-                }catch (Exception e){
+                    ownLocation();
+                } catch (Exception e) {
                     // Do nothing
                 }
+            }
 
+
+        });
+        fab.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+
+                CameraPosition cameraPosition = new CameraPosition.Builder()
+                        .target(myPosition) // Sets the center of the map to
+                        .zoom(18)                   // Sets the zoom
+                        .bearing(0) // Sets the orientation of the camera to east
+                        .tilt(30)    // Sets the tilt of the camera to 30 degrees
+                        .build();    // Creates a CameraPosition from the builder
+
+
+                mMap.animateCamera(CameraUpdateFactory.newCameraPosition(
+                        cameraPosition));
+                return false;
             }
         });
 
@@ -219,11 +237,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 protected void onPostExecute(String responseString) {
                     Toast toast = new Toast(getApplicationContext());
                     //TODO check returned string +username?
-                    //if(responseString.equals("Operation successful, updated SCORE and RANK for User")){
-                    toast.makeText(MapsActivity.this, "One Point For You!", toast.LENGTH_SHORT).show();
-                    /*} else {
-                        toast.makeText(MapsActivity.this, responseString, toast.LENGTH_SHORT).show();
-                    }*/
+                    if (responseString.equals("true")) {
+                        toast.makeText(MapsActivity.this, "One Point For You!", toast.LENGTH_SHORT).show();
+                    } else if (responseString.equals("wrongcode")) {
+                        toast.makeText(MapsActivity.this, "Wrong MeetMe-Code! Try again!", toast.LENGTH_SHORT).show();
+                    } else if (responseString.equals("wrongteam")) {
+                        toast.makeText(MapsActivity.this, usern + " is not in your team!", toast.LENGTH_SHORT).show();
+                    } else if (responseString.equals("friends")) {
+                        toast.makeText(MapsActivity.this, "You already met " + usern + "!", toast.LENGTH_SHORT).show();
+                    } else if (responseString.equals("toofar")) {
+                        toast.makeText(MapsActivity.this, usern + " is too far away!", toast.LENGTH_SHORT).show();
+                    }
 
                    /* final AlertDialog.Builder alertadd = new AlertDialog.Builder(MapsActivity.this);
                     LayoutInflater factory = LayoutInflater.from(MapsActivity.this);
@@ -272,6 +296,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 String username = prefs.getString("username", null);
                 String password = prefs.getString("password", null);
 
+                ValueAnimator vAnimator = new ValueAnimator();
+
 
                 longitude = newLoc.getLongitude();
                 latitude = newLoc.getLatitude();
@@ -279,12 +305,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 if (mymarker != null) {
                     mymarker.remove();
-                    circle.remove();
+                    if (vAnimator.isStarted() && circle == null) {
+                        vAnimator.end();
 
+                    }
+                    circle.remove();
                 }
                 mymarker = mMap.addMarker(new MarkerOptions().position(myPosition).title(username).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)).draggable(true));
 
                 // add radar
+
                 circle = mMap.addCircle(new CircleOptions()
                                 .center(myPosition)
                                 .radius(100)
@@ -292,7 +322,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 .strokeWidth(5)
                 );
 
-                ValueAnimator vAnimator = new ValueAnimator();
+
                 vAnimator.setRepeatCount(ValueAnimator.INFINITE);
                 vAnimator.setRepeatMode(ValueAnimator.RESTART);  /* PULSE */
                 vAnimator.setIntValues(0, 100);
@@ -541,7 +571,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 startActivity(mapsActivity);
                 break;
             case R.id.nav_ranking:
-                Intent rankingActivity = new Intent(getApplicationContext(), RankingActivity.class);
+                //Intent rankingActivity = new Intent(getApplicationContext(), TeamRankActivity.class);
+                Intent rankingActivity = new Intent(getApplicationContext(), UserRankActivity.class);
                 startActivity(rankingActivity);
                 break;
             case R.id.nav_help:
@@ -605,4 +636,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public Location getPossiblyStaleLocation() {
         return null;
     }
+
+
 }

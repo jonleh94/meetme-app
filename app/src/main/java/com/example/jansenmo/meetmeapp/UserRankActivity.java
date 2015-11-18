@@ -85,8 +85,9 @@ public class UserRankActivity extends AppCompatActivity {
         NavigationView vDrawer = (NavigationView) findViewById(R.id.nav_view);
         // Setup drawer view
         setupDrawerContent(vDrawer);
-        //getUserScoreboard();
+        getUserScoreboard();
 
+/*
         rank[0]="10";
         rank[1]="9";
         rank[2]="8";
@@ -94,6 +95,7 @@ public class UserRankActivity extends AppCompatActivity {
         user[1]="9";
         user[2]="8";
         initUser(rank, user, score);
+        */
         //Change to TeamScoreboard
         teamButton = (Button) this.findViewById(R.id.teamButton);
         teamButton.setOnClickListener(new View.OnClickListener() {
