@@ -463,7 +463,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         for (int i = 0; i < users.size(); i++) {
 
-            LatLng userPosition = new LatLng(lats.get(i), lngs.get(i));
+            LatLng userPosition = new LatLng(lngs.get(i), lats.get(i));
             // get userdata from login
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
             final String username = prefs.getString("username", null);
