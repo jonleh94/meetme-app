@@ -88,14 +88,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     String getOtherLoc = "meetmeserver/api/geo/list";
     URL requestUrl;
     LatLng myPosition = null;
+    private Timer mytimer;
 
     public int count = 0;
-    public Double[] lats = new Double[50];
-    public Double[] lngs = new Double[50];
-    public String[] users = new String[50];
-    public String[] team = new String[50];
-
-    Timer mytimer;
+    public ArrayList <Double> lats = new ArrayList<Double>();
+    public ArrayList <Double> lngs = new ArrayList<Double>();
+    public ArrayList <String> users = new ArrayList<String>();
+    public ArrayList <String> team = new ArrayList<String>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -452,20 +451,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
         for (int i = 0; i < locationArray.size(); i++) {
-            lats[i] = Double.valueOf(locationArray.get(i).latitude);
-            lngs[i] = Double.valueOf(locationArray.get(i).longitude);
-            users[i] = locationArray.get(i).username;
-            team[i] = locationArray.get(i).team;
-            count++;
+            lats.add(Double.valueOf(locationArray.get(i).latitude));
+            lngs.add(Double.valueOf(locationArray.get(i).longitude));
+            users.add(locationArray.get(i).username);
+            team.add(locationArray.get(i).team);
         }
         initMarkers(lats, lngs, users, team);
     }
 
-    public void initMarkers(Double[] lats, Double[] lngs, String[] users, String[] team) {
+    public void initMarkers(ArrayList<Double> lats,ArrayList<Double> lngs, ArrayList<String> users, ArrayList<String> team) {
 
-        for (int i = 0; i < count; i++) {
+        for (int i = 0; i < users.size(); i++) {
 
-            LatLng userPosition = new LatLng(lngs[i], lats[i]);
+            LatLng userPosition = new LatLng(lats.get(i), lngs.get(i));
             // get userdata from login
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
             final String username = prefs.getString("username", null);
@@ -476,13 +474,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
 
 
-            if (!users[i].equals(username)) {
-                if (team[i] == "blue") {
-                    usermarker = mMap.addMarker(new MarkerOptions().position(userPosition).title(users[i]).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)).draggable(true));
-                } else if (team[i] == "red") {
-                    usermarker = mMap.addMarker(new MarkerOptions().position(userPosition).title(users[i]).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)).draggable(true));
-                } else {
-                    usermarker = mMap.addMarker(new MarkerOptions().position(userPosition).title(users[i]).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)).draggable(true));
+            if (!users.get(i).equals(username)) {
+                if (team.get(i) == "blue") {
+                    usermarker = mMap.addMarker(new MarkerOptions().position(userPosition).title("Location for: " + users.get(i)).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)).draggable(true));
+                }
+                else if (team.get(i) == "red"){
+                    usermarker = mMap.addMarker(new MarkerOptions().position(userPosition).title("Location for: " + users.get(i)).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)).draggable(true));
+                }
+                else {
+                    usermarker = mMap.addMarker(new MarkerOptions().position(userPosition).title("Location for: " + users.get(i)).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)).draggable(true));
                 }
                 mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                     @Override
