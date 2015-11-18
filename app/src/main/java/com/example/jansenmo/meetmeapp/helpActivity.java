@@ -98,6 +98,10 @@ public class helpActivity extends AppCompatActivity implements NavigationView.On
                 Intent mapsActivity = new Intent(getApplicationContext(), MapsActivity.class);
                 startActivity(mapsActivity);
                 break;
+            case R.id.nav_profil:
+                Intent profilActivity = new Intent(getApplicationContext(), ProfilActivity.class);
+                startActivity(profilActivity);
+                break;
             case R.id.nav_ranking:
                 Intent rankingActivity = new Intent(getApplicationContext(), UserRankActivity.class);
                 startActivity(rankingActivity);

@@ -110,7 +110,6 @@ public class ProfilActivity extends AppCompatActivity {
                 startActivity(mapsActivity);
                 break;
             case R.id.nav_ranking:
-                //Intent rankingActivity = new Intent(getApplicationContext(), TeamRankActivity.class);
                 Intent rankingActivity = new Intent(getApplicationContext(), UserRankActivity.class);
                 startActivity(rankingActivity);
                 break;
