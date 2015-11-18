@@ -58,6 +58,8 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, LocationTracker, GoogleMap.OnMarkerClickListener {
@@ -93,6 +95,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public String[] users = new String[50];
     public String[] team = new String[50];
 
+    Timer mytimer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,6 +116,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onClick(View view) {
                 try {
                     ownLocation();
+                    otherLocation();
                 } catch (Exception e) {
                     // Do nothing
                 }
@@ -150,6 +154,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         ownLocation();
         // get location of other user
         otherLocation();
+
+        mytimer = new Timer();
+        mytimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                otherLocation();
+            }
+        }, 0, 1000 * 60);
 
 
     }
@@ -289,55 +301,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onUpdate(Location oldLoc, long oldTime, Location newLoc,
                                  long newTime) {
-
-
-                // get userdata from login
+                longitude = newLoc.getLongitude();
+                latitude = newLoc.getLatitude();
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                 String username = prefs.getString("username", null);
                 String password = prefs.getString("password", null);
 
-                ValueAnimator vAnimator = new ValueAnimator();
-
-
-                longitude = newLoc.getLongitude();
-                latitude = newLoc.getLatitude();
-                myPosition = new LatLng(latitude, longitude);
-
-                if (mymarker != null) {
-                    mymarker.remove();
-                    if (vAnimator.isStarted() && circle == null) {
-                        vAnimator.end();
-
-                    }
-                    circle.remove();
-                }
-                mymarker = mMap.addMarker(new MarkerOptions().position(myPosition).title(username).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)).draggable(true));
-
-                // add radar
-
-                circle = mMap.addCircle(new CircleOptions()
-                                .center(myPosition)
-                                .radius(100)
-                                .strokeColor(0x55547AFA)
-                                .strokeWidth(5)
-                );
-
-
-                vAnimator.setRepeatCount(ValueAnimator.INFINITE);
-                vAnimator.setRepeatMode(ValueAnimator.RESTART);  /* PULSE */
-                vAnimator.setIntValues(0, 100);
-                vAnimator.setDuration(1500);
-                vAnimator.setEvaluator(new IntEvaluator());
-                vAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
-                vAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                    @Override
-                    public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                        float animatedFraction = valueAnimator.getAnimatedFraction();
-                        // Log.e("", "" + animatedFraction);
-                        circle.setRadius(animatedFraction * 100);
-                    }
-                });
-                vAnimator.start();
+                setMyMarker(username);
 
                 // Send position to database
                 String ipu = ip;
@@ -365,6 +335,50 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         gps.start(listener);
     }
 
+    public void setMyMarker(String username) {
+        // get userdata from login
+
+
+        ValueAnimator vAnimator = new ValueAnimator();
+
+        myPosition = new LatLng(latitude, longitude);
+
+        if (mymarker != null) {
+            mymarker.remove();
+            if (vAnimator.isStarted() && circle == null) {
+                vAnimator.end();
+
+            }
+            circle.remove();
+        }
+        mymarker = mMap.addMarker(new MarkerOptions().position(myPosition).title(username).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)).draggable(true));
+
+        // add radar
+
+        circle = mMap.addCircle(new CircleOptions()
+                        .center(myPosition)
+                        .radius(100)
+                        .strokeColor(0x55547AFA)
+                        .strokeWidth(5)
+        );
+
+
+        vAnimator.setRepeatCount(ValueAnimator.INFINITE);
+        vAnimator.setRepeatMode(ValueAnimator.RESTART);  /* PULSE */
+        vAnimator.setIntValues(0, 100);
+        vAnimator.setDuration(1500);
+        vAnimator.setEvaluator(new IntEvaluator());
+        vAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
+        vAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                float animatedFraction = valueAnimator.getAnimatedFraction();
+                // Log.e("", "" + animatedFraction);
+                circle.setRadius(animatedFraction * 100);
+            }
+        });
+        vAnimator.start();
+    }
 
     public void otherLocation() {
 
@@ -421,9 +435,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }.execute();
 
         }
-
+        this.runOnUiThread(Timer_Tick);
 
     }
+
+    private Runnable Timer_Tick = new Runnable() {
+        public void run() {
+
+            //This method runs in the same thread as the UI.
+            //Do something to the UI thread here
+
+        }
+    };
 
     public void setUserMarkers(ArrayList<com.example.jansenmo.meetmeapp.Location> locationArray) {
 
@@ -443,14 +466,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         for (int i = 0; i < count; i++) {
 
             LatLng userPosition = new LatLng(lngs[i], lats[i]);
-            /*
-            if (usermarker != null) {
-                usermarker.remove();
-            }
-            */
             // get userdata from login
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
             final String username = prefs.getString("username", null);
+
+            if (usermarker != null) {
+                mMap.clear();
+                setMyMarker(username);
+            }
+
 
             if (!users[i].equals(username)) {
                 if (team[i] == "blue") {
