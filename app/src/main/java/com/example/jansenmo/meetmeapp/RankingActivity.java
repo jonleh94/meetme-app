@@ -427,6 +427,8 @@ public class RankingActivity extends AppCompatActivity {
                 startActivity(helpActivity);
                 break;
             case R.id.nav_logout:
+                LogoutProcess log = new LogoutProcess();
+                log.logoutProcess(context);
                 Intent logoutActivity = new Intent(getApplicationContext(), LoginActivity.class);
                 startActivity(logoutActivity);
                 break;

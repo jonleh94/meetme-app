@@ -1,5 +1,6 @@
 package com.example.jansenmo.meetmeapp;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -20,6 +21,7 @@ public class helpActivity extends AppCompatActivity implements NavigationView.On
 
     private DrawerLayout drawer;
     ActionBarDrawerToggle toggle;
+    Context context = this;
 
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,6 +107,8 @@ public class helpActivity extends AppCompatActivity implements NavigationView.On
                 startActivity(helpActivity);
                 break;
             case R.id.nav_logout:
+                LogoutProcess log  = new LogoutProcess();
+                log.logoutProcess(context);
                 Intent logoutActivity = new Intent(getApplicationContext(), LoginActivity.class);
                 startActivity(logoutActivity);
                 break;
