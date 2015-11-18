@@ -41,7 +41,7 @@ public class CircleView extends View {
         height = disp.getHeight();
 
 
-        //TODO get TeamRanks from server and save in rankRead and rankBlue
+        //TODO get TeamRanks from server and save in rankRed and rankBlue
 
         circle1 = new Paint();
         circle2 = new Paint();
@@ -66,12 +66,12 @@ public class CircleView extends View {
         }
 
         if(sizeBlue>sizeRed) {
-            canvas.drawCircle(width/2, height/2, sizeBlue, circle1);
-            canvas.drawCircle(width/2, height/2, sizeRed, circle2);
+            canvas.drawCircle(width/2, height/4, sizeBlue, circle1);
+            canvas.drawCircle(width/3, height/2, sizeRed, circle2);
         }
         else {
-            canvas.drawCircle(width/2, height/2, sizeRed, circle2);
-            canvas.drawCircle(width/2, height/2, sizeBlue, circle1);
+            canvas.drawCircle(width/2, height/4, sizeRed, circle2);
+            canvas.drawCircle(width/3, height/2, sizeBlue, circle1);
         }
     }
 
