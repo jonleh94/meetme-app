@@ -7,7 +7,7 @@ import android.app.Application;
  */
 public class NetworkSettings extends Application {
 
-    String ip = "192.168.0.113";
+    String ip = "192.168.0.103";
 
     public String getIpAddress() {
         return ip;

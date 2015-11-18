@@ -2,13 +2,10 @@ package com.example.jansenmo.meetmeapp;
 
 import android.animation.IntEvaluator;
 import android.animation.ValueAnimator;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
@@ -61,9 +58,6 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, LocationTracker {
@@ -522,7 +516,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 startActivity(mapsActivity);
                 break;
             case R.id.nav_ranking:
-                Intent rankingActivity = new Intent(getApplicationContext(), RankingActivity.class);
+                Intent rankingActivity = new Intent(getApplicationContext(), UserRankActivity.class);
                 startActivity(rankingActivity);
                 break;
             case R.id.nav_help:
