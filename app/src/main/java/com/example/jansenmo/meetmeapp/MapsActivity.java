@@ -73,6 +73,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     double latitude; // latitude
     double longitude; // longitude
     private Marker mymarker;
+    private Marker usermarker;
     ProviderLocationTracker gps;
     Context context = this;
     String usern;
@@ -89,7 +90,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     String getMeetMe = "meetmeserver/api/meetme";
     String getOtherLoc = "meetmeserver/api/geo/list";
     URL requestUrl;
+    LatLng myPosition;
+    String username;
+    private Timer mytimer;
 
+    public ArrayList <Double> lats = new ArrayList<Double>();
+    public ArrayList <Double> lngs = new ArrayList<Double>();
+    public ArrayList <String> users = new ArrayList<String>();
+    public ArrayList <String> team = new ArrayList<String>();
 
     MapView maView;
 
@@ -104,7 +112,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
 
         // Create floating button for MeetMe Process
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -149,7 +156,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // get location of other user
         otherLocation();
 
-
+        mytimer = new Timer();
+        mytimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                otherLocation();
+            }
+        }, 0, 1000 * 60);
     }
 
     public void getOwnCode() {
@@ -284,19 +297,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 // get userdata from login
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                String username = prefs.getString("username", null);
+                username = prefs.getString("username", null);
                 String password = prefs.getString("password", null);
 
 
                 longitude = newLoc.getLongitude();
                 latitude = newLoc.getLatitude();
-                LatLng myPosition = new LatLng(latitude, longitude);
+                myPosition = new LatLng(latitude, longitude);
+
 
                 if (mymarker != null) {
                     mymarker.remove();
                 }
                 mymarker = mMap.addMarker(new MarkerOptions().position(myPosition).title("Location for: " + username).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)).draggable(true));
-
+                otherLocation();
                 // add radar
                 final Circle circle = mMap.addCircle(new CircleOptions()
                                 .center(myPosition)
@@ -354,11 +368,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
         if (true) {
-            new AsyncTask<String, String, ArrayList<Location>>() {
-                ArrayList<Location> locationArray = null;
+            new AsyncTask<String, String, ArrayList<com.example.jansenmo.meetmeapp.Location>>() {
+                ArrayList<com.example.jansenmo.meetmeapp.Location> locationArray = null;
 
                 @Override
-                protected ArrayList<Location> doInBackground(String... params) {
+                protected ArrayList<com.example.jansenmo.meetmeapp.Location> doInBackground(String... params) {
                     InputStream response = null;
                     try {
                         requestUrl = new URL("http://" +
@@ -396,11 +410,55 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
 
                 // wait for asynctask to finish
-                protected void onPostExecute(ArrayList<Location> scoreArray) {
+                protected void onPostExecute(ArrayList<com.example.jansenmo.meetmeapp.Location> locationArray) {
                     //TODO call method to set marker
+                    setUserMarkers(locationArray);
                 }
             }.execute();
 
+        }
+        this.runOnUiThread(Timer_Tick);
+    }
+
+    private Runnable Timer_Tick = new Runnable() {
+        public void run() {
+
+            //This method runs in the same thread as the UI.
+            //Do something to the UI thread here
+
+        }
+    };
+
+    public void setUserMarkers(ArrayList<com.example.jansenmo.meetmeapp.Location> locationArray) {   //geht das oder muss es userArray sein?
+
+    for (int i = 0; i < locationArray.size(); i++) {
+        lats.add(Double.valueOf(locationArray.get(i).latitude));
+        lngs.add(Double.valueOf(locationArray.get(i).longitude));
+        users.add(locationArray.get(i).username);
+        team.add(locationArray.get(i).team);
+    }
+    initMarkers(lats, lngs, users, team);
+}
+
+    public void initMarkers(ArrayList<Double> lats,ArrayList<Double> lngs, ArrayList<String> users, ArrayList<String> team) {
+
+            if (usermarker != null) {
+            //    circle reinpacken
+                mMap.clear();
+                mymarker = mMap.addMarker(new MarkerOptions().position(myPosition).title("Location for: " + username).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)).draggable(true));
+            }
+
+        for (int i = 0; i < users.size(); i++) {
+            LatLng userPosition = new LatLng(lats.get(i), lngs.get(i));
+            if (team.get(i) == "blue") {
+                    usermarker = mMap.addMarker(new MarkerOptions().position(userPosition).title("Location for: " + users.get(i)).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)).draggable(true));
+            }
+            else if (team.get(i) == "red"){
+                    usermarker = mMap.addMarker(new MarkerOptions().position(userPosition).title("Location for: " + users.get(i)).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)).draggable(true));
+            }
+            else {
+                    usermarker = mMap.addMarker(new MarkerOptions().position(userPosition).title("Location for: " + users.get(i)).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)).draggable(true));
+            }
         }
     }
 
