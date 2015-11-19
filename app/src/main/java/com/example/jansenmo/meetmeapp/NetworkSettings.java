@@ -7,7 +7,7 @@ import android.app.Application;
  */
 public class NetworkSettings extends Application {
 
-    String ip = "192.168.1.78";
+    String ip = "192.168.1.78"; // change in logout activity
 
     public String getIpAddress() {
         return ip;

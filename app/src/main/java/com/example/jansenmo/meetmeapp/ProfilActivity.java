@@ -2,17 +2,37 @@ package com.example.jansenmo.meetmeapp;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
+import android.widget.TextView;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.StatusLine;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * Created by mayf on 17.11.2015.
@@ -22,15 +42,29 @@ import android.widget.TableRow;
 public class ProfilActivity extends AppCompatActivity {
 
     private DrawerLayout drawer;
-
+    Context context = this;
     TableRow teamColor;
     TableLayout friends;
-    Context context = this;
+
+    String ip;
+    String port = "8087";
+
+    String getFriendsList = "meetmeserver/api/friend/list";
+    String getTeamColor = "meetmeserver/api/user/get/team";
+
+    TableLayout stk;
+
+    TableRow tbrow;
+    ImageView avatar;
+
 
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.profil);
+        setContentView(R.layout.profil_activity);
+
+
+        ip = ((NetworkSettings) this.getApplication()).getIpAddress();
 
         // Create navigation drawer
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -39,16 +73,151 @@ public class ProfilActivity extends AppCompatActivity {
         // Setup drawer view
         setupDrawerContent(vDrawer);
 
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        final String username = prefs.getString("username", null);
+
+        TextView userTxt = (TextView) findViewById(R.id.usernameText);
+        userTxt.setText(username);
+
 
         teamColor = (TableRow) findViewById(R.id.teamColor);
+        avatar = (ImageView) findViewById(R.id.imageView3);
         friends = (TableLayout) findViewById(R.id.friendsTable);
 
         //TODO pick and set TeamColor!!!
+
+        getTeamColor();
         //teamColor.setBackgroundColor();
 
 
-        for (int i = 0; i < 5; i++) {
-            //TODO MO!!!!! Add friends from Backend into TableLayout!!!
+        //TODO MO!!!!! Add friends from Backend into TableLayout!!!
+        getFriendsList();
+
+
+    }
+    public void getTeamColor(){
+
+        context = this;
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        final String username = prefs.getString("username", null);
+
+        if (true) {
+            new AsyncTask<String, String, String>() {
+
+
+                @Override
+                protected String doInBackground(String... uri) {
+                    HttpClient httpclient = new DefaultHttpClient();
+                    HttpResponse response;
+                    String responseString = null;
+                    try {
+                        response = httpclient.execute(new HttpGet("http://" + ip + ":" + port + "/" + getTeamColor + "/" + username));
+                        StatusLine statusLine = response.getStatusLine();
+                        if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
+                            ByteArrayOutputStream out = new ByteArrayOutputStream();
+                            response.getEntity().writeTo(out);
+                            responseString = out.toString();
+                            Log.i("DEBUG", responseString);
+                            out.close();
+                        } else {
+                            //Closes the connection.
+                            response.getEntity().getContent().close();
+                            throw new IOException(statusLine.getReasonPhrase());
+                        }
+                    } catch (ClientProtocolException e) {
+                        //TODO Handle problems..
+                    } catch (IOException e) {
+                        //TODO Handle problems..
+                    }
+                    return responseString;
+                }
+
+                @Override
+                protected void onPostExecute(String responseString) {
+                    if(responseString.equals("blue")){
+                        avatar.setImageResource(R.mipmap.contacts_blue);
+                    } else{
+                        avatar.setImageResource(R.mipmap.contacts_red);
+                    }
+
+                }
+            }.execute();
+
+        }
+
+    }
+
+    public void getFriendsList() {
+        context = this;
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        final String username = prefs.getString("username", null);
+
+
+        if (true) {
+            new AsyncTask<String, String, String>() {
+
+
+                @Override
+                protected String doInBackground(String... uri) {
+                    HttpClient httpclient = new DefaultHttpClient();
+                    HttpResponse response;
+                    String responseString = null;
+                    try {
+                        response = httpclient.execute(new HttpGet("http://" + ip + ":" + port + "/" + getFriendsList + "/" + username));
+                        StatusLine statusLine = response.getStatusLine();
+                        if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
+                            ByteArrayOutputStream out = new ByteArrayOutputStream();
+                            response.getEntity().writeTo(out);
+                            responseString = out.toString();
+                            Log.i("DEBUG", responseString);
+                            out.close();
+                        } else {
+                            //Closes the connection.
+                            response.getEntity().getContent().close();
+                            throw new IOException(statusLine.getReasonPhrase());
+                        }
+                    } catch (ClientProtocolException e) {
+                        //TODO Handle problems..
+                    } catch (IOException e) {
+                        //TODO Handle problems..
+                    }
+                    return responseString;
+                }
+
+                @Override
+                protected void onPostExecute(String responseString) {
+                    processFriendsList(responseString);
+                }
+            }.execute();
+
+        }
+    }
+
+    public void processFriendsList(String responseString) {
+        ArrayList<String> friendsArrayList = new ArrayList<>();
+        responseString = responseString.replaceAll("\\[", "");
+        responseString = responseString.replaceAll("\\]", "");
+        while (responseString.indexOf(",") > 0) {
+            String temp = responseString.substring(0, responseString.indexOf(","));
+            friendsArrayList.add(temp);
+            responseString = responseString.substring(responseString.indexOf(",") + 2, responseString.length());
+        }
+        friendsArrayList.add(responseString);
+        stk = (TableLayout) findViewById(R.id.friendsTable);
+        for (int i = 0; i < friendsArrayList.size(); i++) {
+
+
+            int fontSize = 20;
+            tbrow = new TableRow(this);
+            tbrow.setPadding(0, 0, 0, 0);
+            tbrow.setGravity(Gravity.CENTER);
+            TextView t1v = new TextView(this);
+            t1v.setText(friendsArrayList.get(i));
+            t1v.setTextSize(fontSize);
+            t1v.setGravity(Gravity.CENTER);
+            tbrow.addView(t1v);
+            stk.addView(tbrow);
+
         }
     }
 
@@ -113,6 +282,10 @@ public class ProfilActivity extends AppCompatActivity {
                 Intent rankingActivity = new Intent(getApplicationContext(), UserRankActivity.class);
                 startActivity(rankingActivity);
                 break;
+            case R.id.nav_profil:
+                Intent profilActivity = new Intent(getApplicationContext(), ProfilActivity.class);
+                startActivity(profilActivity);
+                break;
             case R.id.nav_help:
                 Intent helpActivity = new Intent(getApplicationContext(), helpActivity.class);
                 startActivity(helpActivity);
@@ -121,6 +294,8 @@ public class ProfilActivity extends AppCompatActivity {
                 LogoutProcess log = new LogoutProcess();
                 log.logoutProcess(context);
                 Intent logoutActivity = new Intent(getApplicationContext(), LoginActivity.class);
+                logoutActivity.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                logoutActivity.putExtra("EXIT", true);
                 startActivity(logoutActivity);
                 break;
             default:

@@ -432,6 +432,8 @@ public class UserRankActivity extends AppCompatActivity {
                 LogoutProcess log = new LogoutProcess();
                 log.logoutProcess(context);
                 Intent logoutActivity = new Intent(getApplicationContext(), LoginActivity.class);
+                logoutActivity.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                logoutActivity.putExtra("EXIT", true);
                 startActivity(logoutActivity);
                 break;
             default:
@@ -450,7 +452,3 @@ public class UserRankActivity extends AppCompatActivity {
         drawer.closeDrawers();
     }
 }
-
-
-
-

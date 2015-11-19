@@ -11,6 +11,7 @@ import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TableLayout;
+import android.widget.TextView;
 
 public class CircleView extends View {
 
@@ -23,6 +24,7 @@ public class CircleView extends View {
 
     public CircleView(Context context) {
         super(context);
+
         // create the Paint and set its color
         construct();
     }
@@ -42,6 +44,10 @@ public class CircleView extends View {
 
 
         //TODO get TeamRanks from server and save in rankRed and rankBlue
+
+        rankRed = 200;
+        rankBlue = 100;
+
 
         circle1 = new Paint();
         circle2 = new Paint();
